@@ -1,0 +1,30 @@
+# Render Blueprint for the API (https://render.com/docs/blueprint-spec)
+# New → Blueprint → pick this repo. Fill the env vars marked `sync: false` in the dashboard.
+services:
+  - type: web
+    name: smart-erp-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    # --include=dev: TypeScript and the build tools are devDependencies.
+    buildCommand: npm ci --include=dev && npm run build -w @erp/shared && npm run build -w @erp/api
+    startCommand: npm run start -w @erp/api
+    healthCheckPath: /api/v1/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: MONGO_URI
+        sync: false # MongoDB Atlas connection string
+      - key: CLIENT_URL
+        sync: false # e.g. https://smart-erp.vercel.app
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: 2 # browser → Vercel → Render load balancer → API
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: LOG_LEVEL
+        value: info

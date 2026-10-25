@@ -1,0 +1,70 @@
+<app-page-header
+  [title]="config().i18n + (isEdit() ? '.edit' : '.new')"
+  [backLink]="config().baseRoute"
+  [backLabel]="config().i18n + '.title'"
+/>
+
+@if (error(); as errorKey) {
+  <app-error-banner [message]="errorKey" [retryable]="false" />
+}
+
+@if (loading()) {
+  <section class="card p-6">
+    <app-skeleton type="text" [count]="6" />
+  </section>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate class="flex flex-col gap-4">
+    <section class="card grid gap-4 p-4 sm:p-6 md:grid-cols-3">
+      <app-remote-autocomplete
+        formControlName="partyId"
+        [label]="config().party === 'supplier' ? 'documents.fields.supplier' : 'documents.fields.customer'"
+        [search]="searchParty()"
+        [initialLabel]="partyLabel()"
+      />
+
+      <app-field [label]="'documents.fields.' + config().dateField" for="doc-date" [control]="form.controls.date">
+        <p-datepicker inputId="doc-date" formControlName="date" [showIcon]="true" dateFormat="yy-mm-dd" appendTo="body" [fluid]="true" />
+      </app-field>
+
+      @if (config().kind !== 'quotation') {
+        <app-field
+          label="documents.fields.warehouse"
+          for="doc-warehouse"
+          [hint]="config().warehouse === 'optional' ? 'documents.warehouseHint' : undefined"
+          [control]="form.controls.warehouseId"
+        >
+          <p-select
+            inputId="doc-warehouse"
+            formControlName="warehouseId"
+            [options]="warehouseOptions()"
+            optionLabel="name"
+            optionValue="_id"
+            appendTo="body"
+            [fluid]="true"
+          />
+        </app-field>
+      }
+    </section>
+
+    <section class="card p-4 sm:p-6">
+      <h2 class="m-0 mb-4 flex items-center gap-2 text-title font-semibold">
+        <span class="material-symbols-outlined text-primary" aria-hidden="true">list_alt</span>
+        {{ 'documents.lines' | translate }}
+      </h2>
+      <app-lines-editor [lines]="form.controls.lines" [mode]="config().priceMode" />
+    </section>
+
+    <section class="card p-4 sm:p-6">
+      <app-field label="documents.fields.notes" for="doc-notes" [control]="form.controls.notes">
+        <textarea pTextarea id="doc-notes" rows="3" formControlName="notes" class="w-full"></textarea>
+      </app-field>
+    </section>
+
+    <div class="sticky bottom-0 z-[5] -mx-4 flex flex-wrap justify-end gap-2 border-t border-border bg-app-bg/90 px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
+      <p-button type="submit" [label]="'documents.saveDraft' | translate" [outlined]="true" [loading]="saving()" />
+      @if (showSaveAction()) {
+        <p-button type="button" [label]="config().saveAndAction!.labelKey | translate" [disabled]="saving()" (onClick)="save(true)" />
+      }
+    </div>
+  </form>
+}

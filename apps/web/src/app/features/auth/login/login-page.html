@@ -1,0 +1,49 @@
+<div class="card p-6 sm:p-8">
+  <h1 class="m-0 mb-1 text-headline font-bold tracking-tight">{{ 'auth.login.title' | translate }}</h1>
+  <p class="m-0 mb-6 text-body text-muted">{{ 'auth.login.subtitle' | translate }}</p>
+
+  @if (error(); as errorKey) {
+    <app-error-banner [message]="errorKey" [retryable]="false" />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-4">
+    <app-field label="auth.fields.email" for="login-email" [control]="form.controls.email">
+      <p-iconfield>
+        <p-inputicon><span class="material-symbols-outlined !text-[18px]">mail</span></p-inputicon>
+        <input pInputText id="login-email" type="email" formControlName="email" autocomplete="email" dir="ltr" class="w-full" />
+      </p-iconfield>
+    </app-field>
+
+    <app-field label="auth.fields.password" for="login-password" [control]="form.controls.password">
+      <p-inputgroup>
+        <input
+          pInputText
+          id="login-password"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          autocomplete="current-password"
+          dir="ltr"
+        />
+        <p-inputgroup-addon>
+          <button
+            type="button"
+            class="flex cursor-pointer items-center border-0 bg-transparent p-0 text-muted"
+            (click)="showPassword.set(!showPassword())"
+            [attr.aria-label]="(showPassword() ? 'auth.hidePassword' : 'auth.showPassword') | translate"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </p-inputgroup-addon>
+      </p-inputgroup>
+    </app-field>
+
+    <p-button type="submit" styleClass="mt-2 w-full !h-12" [label]="'auth.login.submit' | translate" [loading]="loading()" />
+  </form>
+
+  <p class="m-0 mt-6 text-center text-body text-muted">
+    {{ 'auth.login.noAccount' | translate }}
+    <a routerLink="/auth/register" class="font-semibold text-primary no-underline hover:underline">
+      {{ 'auth.login.createAccount' | translate }}
+    </a>
+  </p>
+</div>

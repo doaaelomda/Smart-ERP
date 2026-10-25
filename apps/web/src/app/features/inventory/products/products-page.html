@@ -1,0 +1,67 @@
+<app-page-header title="products.title" subtitle="products.subtitle">
+  <button pButton type="button" (click)="openForm()" *appHasPermission="'products.create'">
+    <span class="material-symbols-outlined" aria-hidden="true">add</span>
+    {{ 'products.add' | translate }}
+  </button>
+</app-page-header>
+
+@if (list.error(); as errorKey) {
+  <app-error-banner [message]="errorKey" (retry)="list.reload()" />
+}
+
+<section class="card p-4 sm:p-5">
+  <app-filter-tabs
+    class="mb-3"
+    [options]="typeTabs"
+    [value]="$any(list.filters()['type'] ?? '')"
+    (valueChange)="setType($event)"
+    [ariaLabel]="'products.fields.type' | translate"
+  />
+
+  <app-data-table
+    [columns]="columns()"
+    [data]="list.items()"
+    [total]="list.total()"
+    [loading]="list.loading()"
+    [query]="list.query()"
+    (queryChange)="list.query.set($event)"
+  >
+    <ng-template appCell="name" let-row>
+      <div class="py-1">
+        <p class="m-0 font-semibold text-on-surface">{{ row.name }}</p>
+        <p class="m-0 text-caption text-muted">{{ 'products.type.' + row.type | translate }}</p>
+      </div>
+    </ng-template>
+    <ng-template appCell="salePrice" let-row><span class="num">{{ row.salePrice | money }}</span></ng-template>
+    <ng-template appCell="avgCost" let-row>
+      <span class="num">{{ row.type === 'stock' ? (row.avgCost | money) : '—' }}</span>
+    </ng-template>
+    <ng-template appCell="quantity" let-row>
+      @if (row.type === 'stock') {
+        <span class="num font-semibold" [class.text-danger]="row.reorderLevel !== undefined && row.quantity <= row.reorderLevel">
+          {{ row.quantity | qty }} <span class="font-normal text-muted">{{ row.unit }}</span>
+        </span>
+      } @else {
+        —
+      }
+    </ng-template>
+    <ng-template appCell="isActive" let-row>
+      <app-status-pill [status]="row.isActive ? 'active' : 'inactive'" />
+    </ng-template>
+    <ng-template appCell="actions" let-row>
+      <div class="flex justify-end gap-1">
+        <button pButton [text]="true" [rounded]="true" severity="secondary" type="button" (click)="openForm(row)" tooltipPosition="top" [pTooltip]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate" *appHasPermission="'products.update'">
+          <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+        </button>
+        <ng-container *appHasPermission="'products.delete'">
+          <!-- Same rule as the API: products with stock on hand can't be deleted. -->
+          <span tooltipPosition="top" [pTooltip]="(row.quantity ? 'products.deleteBlocked' : 'common.delete') | translate">
+            <button pButton [text]="true" [rounded]="true" severity="danger" type="button" (click)="delete(row)" [disabled]="!!row.quantity" [attr.aria-label]="'common.delete' | translate">
+              <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+            </button>
+          </span>
+        </ng-container>
+      </div>
+    </ng-template>
+  </app-data-table>
+</section>

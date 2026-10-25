@@ -1,0 +1,78 @@
+@if (loading() && !invoice()) {
+  <section class="card p-6"><app-skeleton type="text" [count]="6" /></section>
+} @else if (error() && !invoice()) {
+  <app-error-banner [message]="error()!" (retry)="load()" />
+} @else if (invoice(); as inv) {
+  <app-page-header
+    [title]="inv.number ? 'invoices.titleNumber' : 'invoices.draftTitle'"
+    [titleParams]="{ number: inv.number }"
+    backLink="/app/sales/invoices"
+    backLabel="invoices.title"
+  >
+    <app-status-pill badge [status]="status()" />
+
+    @if (inv.actions?.edit) {
+      <a pButton [outlined]="true" [routerLink]="['edit']">
+        <span class="material-symbols-outlined" aria-hidden="true">edit</span>{{ 'common.edit' | translate }}
+      </a>
+    }
+    @if (inv.actions?.pay) {
+      <button pButton [outlined]="true" type="button" (click)="recordPayment()" [disabled]="busy()">
+        <span class="material-symbols-outlined" aria-hidden="true">payments</span>{{ 'payments.add' | translate }}
+      </button>
+    }
+    @if (inv.actions?.issue) {
+      <button pButton type="button" (click)="issue()" [disabled]="busy()">
+        <span class="material-symbols-outlined" aria-hidden="true">send</span>{{ 'invoices.issue' | translate }}
+      </button>
+    }
+    <app-action-menu [items]="[
+      { labelKey: 'documents.print', icon: 'print', action: print },
+      { labelKey: 'invoices.cancel', icon: 'block', action: cancel, danger: true, visible: !!inv.actions?.cancel },
+      { labelKey: 'common.delete', icon: 'delete', action: remove, danger: true, visible: !!inv.actions?.delete },
+    ]" />
+  </app-page-header>
+
+  @if (stockError(); as shortage) {
+    <app-error-banner message="invoices.shortage" [params]="{ items: shortage }" [retryable]="false" />
+  }
+  @if (inv.status === 'cancelled' && inv.cancelledReason) {
+    <div class="mb-4 rounded-xl bg-danger-soft p-3 text-label text-danger">
+      {{ 'invoices.cancelledBecause' | translate: { reason: inv.cancelledReason } }}
+    </div>
+  }
+  @if (inv.quotationId) {
+    <p class="m-0 mb-4 text-label text-muted">
+      <a [routerLink]="['/app/sales/quotations', inv.quotationId]" class="text-primary">{{ 'invoices.fromQuotation' | translate }}</a>
+    </p>
+  }
+
+  <app-document-view
+    partyLabel="documents.fields.customer"
+    [partyName]="inv.customerName"
+    [meta]="meta()"
+    [lines]="inv.lines"
+    [totals]="inv.status === 'draft' ? inv : { subtotal: inv.subtotal, discountTotal: inv.discountTotal, vatTotal: inv.vatTotal, total: inv.total, paidAmount: inv.paidAmount }"
+    [notes]="inv.notes"
+  />
+
+  @if (payments().length) {
+    <section class="card p-4 sm:p-6">
+      <h2 class="m-0 mb-3 text-title font-semibold">{{ 'payments.title' | translate }}</h2>
+      <ul class="m-0 flex list-none flex-col gap-2 p-0">
+        @for (p of payments(); track p._id) {
+          <li class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface-container-low px-4 py-3">
+            <span>
+              <span class="num font-semibold">{{ p.number }}</span>
+              <span class="ms-2 text-muted">{{ p.date | localDate }} · {{ 'payments.method.' + p.method | translate }}</span>
+              @if (p.reference) {
+                <span class="num ms-2 text-caption text-muted">{{ p.reference }}</span>
+              }
+            </span>
+            <span class="num font-semibold text-success">{{ p.amount | money }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}

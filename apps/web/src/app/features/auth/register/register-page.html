@@ -1,0 +1,88 @@
+<div class="card p-6 sm:p-8">
+  <h1 class="m-0 mb-1 text-headline font-bold tracking-tight">{{ 'auth.register.title' | translate }}</h1>
+  <p class="m-0 mb-6 text-body text-muted">{{ 'auth.register.subtitle' | translate }}</p>
+
+  @if (error(); as errorKey) {
+    <app-error-banner [message]="errorKey" [retryable]="false" />
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-4">
+    <app-field label="auth.fields.companyName" for="reg-company" [control]="form.controls.companyName">
+      <p-iconfield>
+        <p-inputicon><span class="material-symbols-outlined !text-[18px]">apartment</span></p-inputicon>
+        <input pInputText id="reg-company" formControlName="companyName" autocomplete="organization" class="w-full" />
+      </p-iconfield>
+    </app-field>
+
+    <app-field label="auth.fields.name" for="reg-name" [control]="form.controls.name">
+      <p-iconfield>
+        <p-inputicon><span class="material-symbols-outlined !text-[18px]">person</span></p-inputicon>
+        <input pInputText id="reg-name" formControlName="name" autocomplete="name" class="w-full" />
+      </p-iconfield>
+    </app-field>
+
+    <app-field label="auth.fields.email" for="reg-email" [control]="form.controls.email">
+      <p-iconfield>
+        <p-inputicon><span class="material-symbols-outlined !text-[18px]">mail</span></p-inputicon>
+        <input pInputText id="reg-email" type="email" formControlName="email" autocomplete="email" dir="ltr" class="w-full" />
+      </p-iconfield>
+    </app-field>
+
+    <div class="flex flex-col gap-2">
+      <app-field label="auth.fields.password" for="reg-password" [control]="form.controls.password" [errors]="{ pattern: 'validation.passwordRules' }">
+        <p-inputgroup>
+          <input
+            pInputText
+            id="reg-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="new-password"
+            dir="ltr"
+          />
+          <p-inputgroup-addon>
+            <button
+              type="button"
+              class="flex cursor-pointer items-center border-0 bg-transparent p-0 text-muted"
+              (click)="showPassword.set(!showPassword())"
+              [attr.aria-label]="(showPassword() ? 'auth.hidePassword' : 'auth.showPassword') | translate"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </p-inputgroup-addon>
+        </p-inputgroup>
+      </app-field>
+
+      <ul class="m-0 flex list-none flex-wrap gap-x-4 gap-y-1 p-0 text-caption" aria-live="polite">
+        @for (rule of passwordRules(); track rule.key) {
+          <li class="flex items-center gap-1" [class]="rule.ok ? 'text-success' : 'text-muted'">
+            <span class="material-symbols-outlined !text-[16px]" aria-hidden="true">
+              {{ rule.ok ? 'check_circle' : 'radio_button_unchecked' }}
+            </span>
+            {{ 'auth.passwordRules.' + rule.key | translate }}
+          </li>
+        }
+      </ul>
+    </div>
+
+    <app-field label="auth.fields.confirmPassword" for="reg-confirm" [control]="form.controls.confirmPassword" [errors]="{ mismatch: 'validation.passwordMismatch' }">
+      <input
+        pInputText
+        id="reg-confirm"
+        [type]="showPassword() ? 'text' : 'password'"
+        formControlName="confirmPassword"
+        autocomplete="new-password"
+        dir="ltr"
+        class="w-full"
+      />
+    </app-field>
+
+    <p-button type="submit" styleClass="mt-2 w-full !h-12" [label]="'auth.register.submit' | translate" [loading]="loading()" />
+  </form>
+
+  <p class="m-0 mt-6 text-center text-body text-muted">
+    {{ 'auth.register.haveAccount' | translate }}
+    <a routerLink="/auth/login" class="font-semibold text-primary no-underline hover:underline">
+      {{ 'auth.register.signIn' | translate }}
+    </a>
+  </p>
+</div>

@@ -1,0 +1,125 @@
+<div class="flex flex-col gap-3">
+  @if (searchable()) {
+    <p-iconfield class="w-full sm:max-w-xs">
+      <p-inputicon><span class="material-symbols-outlined !text-[18px]">search</span></p-inputicon>
+      <input
+        pInputText
+        type="search"
+        class="w-full"
+        [formControl]="searchControl"
+        [placeholder]="'common.search' | translate"
+        [attr.aria-label]="'common.search' | translate"
+      />
+    </p-iconfield>
+  }
+
+  <div class="overflow-hidden rounded-xl border border-border">
+    <p-table
+      [value]="rows()"
+      [rowHover]="!loading()"
+      [scrollable]="true"
+      size="small"
+      tableStyleClass="min-w-[640px]"
+    >
+      <ng-template #header>
+        <tr>
+          @for (column of columns(); track column.key) {
+            @if (column.sortable) {
+              <!-- Server-side sort, fully controlled by the query (no client sorting). -->
+              <th
+                [class]="(column.cellClass ?? '') + ' cursor-pointer select-none'"
+                [attr.aria-sort]="ariaSort(column.key)"
+                tabindex="0"
+                (click)="toggleSort(column.key)"
+                (keydown.enter)="toggleSort(column.key)"
+              >
+                <span class="inline-flex items-center gap-1">
+                  {{ column.header | translate }}
+                  <span
+                    class="material-symbols-outlined !text-[16px]"
+                    [class.text-primary]="activeSort().field === column.key"
+                    [class.opacity-40]="activeSort().field !== column.key"
+                    aria-hidden="true"
+                  >{{ activeSort().field !== column.key ? 'unfold_more' : activeSort().order === 1 ? 'arrow_upward' : 'arrow_downward' }}</span>
+                </span>
+              </th>
+            } @else {
+              <th [class]="column.cellClass ?? ''">{{ column.header | translate }}</th>
+            }
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-row>
+        <tr [class.h-14]="loading()" [attr.aria-hidden]="loading() ? 'true' : null">
+          @for (column of columns(); track column.key; let ci = $index) {
+            <td [class]="column.cellClass ?? ''">
+              @if (loading()) {
+                @let sk = skeletonFor(column, ci, row);
+                @switch (sk.kind) {
+                  @case ('avatar') {
+                    <div class="flex min-w-40 items-center gap-3">
+                      <app-skeleton type="circle" height="2.25rem" />
+                      <div class="flex-1">
+                        <app-skeleton type="text" height="0.75rem" [width]="sk.width" />
+                        <app-skeleton type="text" height="0.625rem" width="40%" class="mt-2" />
+                      </div>
+                    </div>
+                  }
+                  @case ('lines') {
+                    <div class="min-w-28">
+                      <app-skeleton type="text" height="0.75rem" [width]="sk.width" />
+                      <app-skeleton type="text" height="0.625rem" width="45%" class="mt-2" />
+                    </div>
+                  }
+                  @case ('pill') {
+                    <app-skeleton type="text" height="1.375rem" width="4rem" class="[&>span]:!rounded-full" />
+                  }
+                  @case ('actions') {
+                    <div class="flex justify-end gap-2">
+                      <app-skeleton type="circle" height="2rem" />
+                      <app-skeleton type="circle" height="2rem" />
+                    </div>
+                  }
+                  @default {
+                    <div class="flex" [class.justify-end]="sk.end">
+                      <app-skeleton type="text" height="0.75rem" width="100%" [style.width]="sk.width" />
+                    </div>
+                  }
+                }
+              } @else if (templates().get(column.key); as tpl) {
+                <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
+              } @else {
+                {{ cellValue(column, asRow(row)) }}
+              }
+            </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td [attr.colspan]="columns().length">
+            <div class="flex flex-col items-center gap-2 py-10 text-muted">
+              <span class="material-symbols-outlined !text-[32px]" aria-hidden="true">inbox</span>
+              <p class="m-0">{{ 'common.noData' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  @if (total() > 0) {
+    <p-paginator
+      [first]="first()"
+      [rows]="query().limit"
+      [totalRecords]="total()"
+      [rowsPerPageOptions]="pageSizeOptions()"
+      [showCurrentPageReport]="true"
+      [currentPageReportTemplate]="'table.report' | translate"
+      appendTo="body"
+      (onPageChange)="onPage($event)"
+    />
+  }
+</div>

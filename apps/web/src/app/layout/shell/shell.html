@@ -1,0 +1,30 @@
+<div class="min-h-dvh bg-app-bg">
+  @if (!isCompact()) {
+    <aside
+      class="fixed inset-y-0 start-0 z-20 w-[264px] border-e border-border bg-card transition-transform duration-200"
+      [class]="desktopOpened() ? '' : language.isRtl() ? 'translate-x-full' : '-translate-x-full'"
+      [attr.aria-hidden]="!desktopOpened()"
+    >
+      <app-sidebar />
+    </aside>
+  } @else {
+    <p-drawer
+      [visible]="mobileOpened()"
+      (visibleChange)="mobileOpened.set($event)"
+      [position]="drawerPosition()"
+      [showCloseIcon]="false"
+      styleClass="!w-[280px]"
+    >
+      <ng-template #headless>
+        <app-sidebar (navigate)="closeOnMobile()" />
+      </ng-template>
+    </p-drawer>
+  }
+
+  <div class="app-main flex min-h-dvh flex-col transition-[margin] duration-200" [style.margin-inline-start.px]="!isCompact() && desktopOpened() ? 264 : 0">
+    <app-header (menuToggle)="toggle()" />
+    <main class="mx-auto w-full max-w-[1400px] flex-1 p-4 md:p-6">
+      <router-outlet />
+    </main>
+  </div>
+</div>

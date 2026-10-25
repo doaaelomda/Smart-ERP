@@ -1,0 +1,115 @@
+<app-page-header title="stock.title" subtitle="stock.subtitle">
+  <button pButton [outlined]="true" type="button" (click)="openTransfer()" *appHasPermission="'stock.transfer'">
+    <span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>
+    {{ 'stock.transfer' | translate }}
+  </button>
+  <button pButton type="button" (click)="openAdjust()" *appHasPermission="'stock.adjust'">
+    <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+    {{ 'stock.adjust' | translate }}
+  </button>
+</app-page-header>
+
+<section class="card p-4 sm:p-5">
+  <div class="mb-4 flex flex-wrap items-end gap-4">
+    <app-field class="w-full sm:w-64" label="stock.fields.warehouse" for="stock-wh">
+      <p-select
+        inputId="stock-wh"
+        [options]="warehouseOptions()"
+        optionLabel="name"
+        optionValue="_id"
+        [ngModel]="levels.filters()['warehouseId'] ?? ''"
+        (ngModelChange)="setWarehouse($event)"
+        appendTo="body"
+        [fluid]="true"
+      />
+    </app-field>
+    @if (tab() === 'levels') {
+      <label class="flex items-center gap-2 pb-2" for="stock-low">
+        <p-toggleswitch inputId="stock-low" [ngModel]="levels.filters()['lowStock'] === true" (ngModelChange)="levels.setFilters({ lowStock: $event || undefined })" />
+        <span class="text-body">{{ 'stock.lowOnly' | translate }}</span>
+      </label>
+      <label class="flex items-center gap-2 pb-2" for="stock-zero">
+        <p-toggleswitch inputId="stock-zero" [ngModel]="levels.filters()['hideZero'] === true" (ngModelChange)="levels.setFilters({ hideZero: $event || undefined })" />
+        <span class="text-body">{{ 'stock.hideZero' | translate }}</span>
+      </label>
+    }
+  </div>
+
+  <p-tabs [value]="tab()" (valueChange)="tab.set($any($event))">
+    <p-tablist>
+      <p-tab value="levels">{{ 'stock.levels' | translate }}</p-tab>
+      <p-tab value="movements">{{ 'stock.movements' | translate }}</p-tab>
+    </p-tablist>
+    <p-tabpanels class="!px-0">
+    <p-tabpanel value="levels">
+      <div>
+        @if (levels.error(); as errorKey) {
+          <app-error-banner [message]="errorKey" (retry)="levels.reload()" />
+        }
+        <app-data-table
+          [columns]="levelColumns()"
+          [data]="levels.items()"
+          [total]="levels.total()"
+          [loading]="levels.loading()"
+          [query]="levels.query()"
+          (queryChange)="levels.query.set($event)"
+        >
+          <ng-template appCell="productName" let-row>
+            <div class="py-1">
+              <p class="m-0 font-semibold text-on-surface">{{ row.productName }}</p>
+              <p class="m-0 text-caption text-muted"><span class="num">{{ row.sku }}</span></p>
+            </div>
+          </ng-template>
+          <ng-template appCell="quantity" let-row>
+            <span class="inline-flex items-center gap-2">
+              @if (row.isLow) {
+                <app-status-pill status="low" />
+              }
+              <span class="num font-semibold">{{ row.quantity | qty }}</span>
+              <span class="text-muted">{{ row.unit }}</span>
+            </span>
+          </ng-template>
+          <ng-template appCell="avgCost" let-row><span class="num">{{ row.avgCost | money }}</span></ng-template>
+          <ng-template appCell="value" let-row><span class="num font-semibold">{{ row.value | money }}</span></ng-template>
+          <ng-template appCell="actions" let-row>
+            <app-action-menu
+              [items]="[
+                { labelKey: 'stock.adjust', icon: 'tune', action: adjustRow(row), visible: canAdjust() },
+                { labelKey: 'stock.transfer', icon: 'swap_horiz', action: transferRow(row), visible: canTransfer() },
+              ]"
+            />
+          </ng-template>
+        </app-data-table>
+      </div>
+    </p-tabpanel>
+
+    <p-tabpanel value="movements">
+      <div>
+        @if (movements.error(); as errorKey) {
+          <app-error-banner [message]="errorKey" (retry)="movements.reload()" />
+        }
+        <app-data-table
+          [columns]="movementColumns"
+          [data]="movements.items()"
+          [total]="movements.total()"
+          [loading]="movements.loading()"
+          [query]="movements.query()"
+          [searchable]="false"
+          (queryChange)="movements.query.set($event)"
+        >
+          <ng-template appCell="createdAt" let-row><span class="whitespace-nowrap">{{ row.createdAt | localDate: true }}</span></ng-template>
+          <ng-template appCell="type" let-row>{{ 'stock.movementType.' + row.type | translate }}</ng-template>
+          <ng-template appCell="quantity" let-row>
+            <span class="num font-semibold" [class.text-success]="row.quantity > 0" [class.text-danger]="row.quantity < 0">
+              {{ row.quantity > 0 ? '+' : '' }}{{ row.quantity | qty }}
+            </span>
+          </ng-template>
+          <ng-template appCell="reason" let-row>
+            <span class="text-muted">{{ row.reason || ('stock.refType.' + row.refType | translate) }}</span>
+          </ng-template>
+        </app-data-table>
+      </div>
+    </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</section>

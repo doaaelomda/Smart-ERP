@@ -1,0 +1,548 @@
+{
+  "common": {
+    "appName": "Smart ERP",
+    "search": "Search",
+    "searchPlaceholder": "Jump to a page… (customers, invoices, products)",
+    "noData": "No data found",
+    "loading": "Loading…",
+    "actions": "Actions",
+    "language": "العربية",
+    "viewAll": "View all",
+    "demoData": "Demo data",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "logout": "Log out",
+    "noResults": "No results",
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "confirm": "Confirm",
+    "retry": "Retry",
+    "all": "All",
+    "back": "Back",
+    "created": "Saved successfully",
+    "updated": "Changes saved",
+    "deleted": "Deleted successfully",
+    "deleteMessage": "\"{{name}}\" will be deleted. This can't be undone.",
+    "more": "More",
+    "typeToSearch": "Type to search…"
+  },
+  "nav": {
+    "main": "Main",
+    "dashboard": "Dashboard",
+    "sales": "Sales",
+    "customers": "Customers",
+    "invoices": "Invoices",
+    "quotations": "Quotations",
+    "payments": "Payments",
+    "inventory": "Inventory",
+    "products": "Products",
+    "stock": "Stock",
+    "warehouses": "Warehouses",
+    "purchasing": "Purchasing",
+    "suppliers": "Suppliers",
+    "purchaseOrders": "Purchase Orders",
+    "reports": "Reports",
+    "settings": "Settings",
+    "toggleMenu": "Toggle menu"
+  },
+  "landing": {
+    "nav": {
+      "features": "Features",
+      "how": "How it works",
+      "login": "Log in",
+      "start": "Get started"
+    },
+    "badge": "Tax invoices with 14% VAT",
+    "title": "Run your whole business from",
+    "titleHighlight": "one smart place",
+    "subtitle": "Sales, invoicing, inventory, purchasing and live insights — built for Egyptian SMBs, in Arabic and English.",
+    "cta": "Start free",
+    "secondaryCta": "Explore features",
+    "checks": {
+      "bilingual": "Arabic & English",
+      "multiTenant": "Multi-company",
+      "secure": "Role-based access"
+    },
+    "featuresTitle": "Everything you need to run daily operations",
+    "featuresSubtitle": "One connected system instead of scattered spreadsheets.",
+    "features": {
+      "sales": {
+        "title": "Sales & Invoicing",
+        "text": "Quotes, VAT invoices with QR, payments and customer balances."
+      },
+      "inventory": {
+        "title": "Inventory",
+        "text": "Multiple warehouses, stock movements and weighted average cost."
+      },
+      "purchasing": {
+        "title": "Purchasing",
+        "text": "Purchase orders, partial receiving and supplier tracking."
+      },
+      "insights": {
+        "title": "Smart Insights",
+        "text": "KPIs, low-stock and overdue alerts, and sales trends."
+      },
+      "roles": {
+        "title": "Users & Permissions",
+        "text": "Roles with fine-grained permissions for every action."
+      },
+      "bilingual": {
+        "title": "Arabic & English",
+        "text": "Full RTL/LTR support, localized numbers and dates."
+      }
+    },
+    "howTitle": "Up and running in minutes",
+    "steps": {
+      "one": {
+        "title": "Create your company",
+        "text": "Set your VAT number, currency and logo."
+      },
+      "two": {
+        "title": "Add products & customers",
+        "text": "Import your catalog and set opening stock."
+      },
+      "three": {
+        "title": "Start selling",
+        "text": "Issue invoices and watch your dashboard update."
+      }
+    },
+    "ctaTitle": "Ready to simplify your business?",
+    "ctaText": "Create your company account for free and explore every module.",
+    "footer": "© 2026 Smart ERP. Portfolio project."
+  },
+  "dashboard": {
+    "greeting": "Welcome back, {{name}}",
+    "subtitle": "Here's what's happening with your business today.",
+    "newInvoice": "New invoice",
+    "period": {
+      "month": "This month",
+      "quarter": "3 months",
+      "year": "This year"
+    },
+    "kpi": {
+      "revenue": "Revenue",
+      "receivables": "Receivables",
+      "stockValue": "Stock value",
+      "overdue": "Overdue invoices",
+      "vsLast": "vs last period"
+    },
+    "revenueTrend": "Revenue trend",
+    "revenueTrendHint": "Last 12 months",
+    "alerts": "Alerts",
+    "alertTypes": {
+      "lowStock": "Low stock",
+      "overdue": "Overdue invoice",
+      "latePo": "Late purchase order"
+    },
+    "recentInvoices": "Recent invoices",
+    "topProducts": "Top products",
+    "table": {
+      "number": "Invoice",
+      "customer": "Customer",
+      "total": "Total",
+      "status": "Status"
+    },
+    "status": {
+      "paid": "Paid",
+      "issued": "Issued",
+      "partially_paid": "Partially paid",
+      "overdue": "Overdue"
+    }
+  },
+  "table": {
+    "itemsPerPage": "Items per page",
+    "of": "of",
+    "report": "{first}–{last} of {totalRecords}"
+  },
+  "auth": {
+    "brandTitle": "Your whole business in one place",
+    "brandText": "Sales, inventory, purchasing and KPIs, with permissions for every employee.",
+    "points": {
+      "sales": "Tax invoices and payment tracking",
+      "inventory": "Multi-warehouse inventory",
+      "secure": "Roles and security for every user"
+    },
+    "fields": {
+      "companyName": "Company name",
+      "name": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password"
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "passwordRules": {
+      "length": "At least 8 characters",
+      "letter": "A letter",
+      "number": "A number"
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome back! Sign in to continue.",
+      "submit": "Sign in",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create one"
+    },
+    "register": {
+      "title": "Create a company account",
+      "subtitle": "You'll be the account Owner and can invite your team later.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "At least {{min}} characters",
+    "passwordMismatch": "Passwords don't match",
+    "maxLength": "At most {{max}} characters",
+    "min": "Must be {{min}} or more",
+    "positive": "Must be greater than 0",
+    "max": "Must be {{max}} or less",
+    "passwordRules": "Use 8+ characters with letters and numbers",
+    "pattern": "Invalid format"
+  },
+  "errors": {
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "EMAIL_TAKEN": "This email is already registered",
+    "ACCOUNT_DISABLED": "This account is disabled. Contact your company admin.",
+    "TENANT_SUSPENDED": "This company account is suspended",
+    "RATE_LIMITED": "Too many attempts. Wait a minute and try again.",
+    "VALIDATION_ERROR": "Please check the entered data",
+    "UNAUTHORIZED": "Please sign in first",
+    "FORBIDDEN": "You don't have permission to do this",
+    "NETWORK": "Can't reach the server. Make sure the API is running.",
+    "UNKNOWN": "Something went wrong, please try again",
+    "INTERNAL_ERROR": "Server error, please try again",
+    "CONFLICT": "This action conflicts with existing data",
+    "NOT_FOUND": "Not found — it may have been deleted",
+    "INSUFFICIENT_STOCK": "Not enough stock for this operation",
+    "INVALID_STATUS_TRANSITION": "This action is not allowed in the current status"
+  },
+  "roles": {
+    "Owner": "Owner",
+    "Admin": "Admin",
+    "Sales": "Sales",
+    "Inventory": "Inventory",
+    "Accountant": "Accountant"
+  },
+  "notifications": {
+    "markAllRead": "Mark all as read",
+    "empty": "No notifications",
+    "lowStock": "Low stock: {{product}} ({{qty}} left)",
+    "overdue": "Invoice {{number}} is overdue — {{customer}}",
+    "latePo": "Purchase order {{number}} is late — {{supplier}}",
+    "welcome": "Welcome to Smart ERP! Start by adding your products and customers."
+  },
+  "comingSoon": {
+    "title": "This page is under construction",
+    "text": "It will be built in an upcoming phase of the roadmap.",
+    "back": "Back to dashboard"
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Manage your customers, their contact details and credit limits.",
+    "add": "Add customer",
+    "edit": "Edit customer",
+    "created": "Customer added successfully",
+    "updated": "Customer updated successfully",
+    "deleted": "Customer deleted",
+    "deleteTitle": "Delete customer?",
+    "deleteMessage": "\"{{name}}\" will be removed from your customers list.",
+    "deleteBlocked": "Can't delete a customer with an outstanding balance",
+    "creditLimitHint": "0 = no limit",
+    "fields": {
+      "name": "Customer name",
+      "email": "Email",
+      "phone": "Phone",
+      "vatNumber": "VAT number",
+      "address": "Address",
+      "creditLimit": "Credit limit",
+      "balance": "Balance",
+      "notes": "Notes",
+      "isActive": "Active customer",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  },
+  "status": {
+    "draft": "Draft",
+    "issued": "Issued",
+    "sent": "Sent",
+    "partially_paid": "Partially paid",
+    "partially_received": "Partially received",
+    "paid": "Paid",
+    "received": "Received",
+    "accepted": "Accepted",
+    "converted": "Converted",
+    "rejected": "Rejected",
+    "cancelled": "Cancelled",
+    "overdue": "Overdue",
+    "expired": "Expired",
+    "late": "Late",
+    "active": "Active",
+    "inactive": "Inactive",
+    "low": "Low stock"
+  },
+  "documents": {
+    "lines": "Items",
+    "addLine": "Add item",
+    "removeLine": "Remove item",
+    "pickProduct": "Search a product or service…",
+    "pickStockProduct": "Search a stock product…",
+    "descriptionPlaceholder": "Description (or a free-text service)",
+    "lineInvalid": "Choose a product or write a description, with a quantity and price.",
+    "defaultWarehouse": "Default warehouse",
+    "warehouseHint": "Stock is taken from here when the invoice is issued",
+    "saveDraft": "Save draft",
+    "fixErrors": "Please fix the highlighted fields",
+    "notEditable": "This document can no longer be edited",
+    "print": "Print",
+    "fields": {
+      "customer": "Customer",
+      "supplier": "Supplier",
+      "item": "Item",
+      "description": "Description",
+      "quantity": "Qty",
+      "unitPrice": "Unit price",
+      "unitCost": "Unit cost",
+      "discount": "Discount",
+      "vat": "VAT {{rate}}%",
+      "lineTotal": "Total",
+      "dueDate": "Due date",
+      "validUntil": "Valid until",
+      "expectedDate": "Expected delivery",
+      "warehouse": "Warehouse",
+      "notes": "Notes"
+    },
+    "totals": {
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "vat": "VAT",
+      "total": "Total"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Products and services you sell or buy, with prices and stock.",
+    "add": "Add product",
+    "edit": "Edit product",
+    "created": "Product added successfully",
+    "updated": "Product updated successfully",
+    "deleteTitle": "Delete product?",
+    "deleteBlocked": "Can't delete a product that has stock",
+    "unitHint": "e.g. pcs, box, kg",
+    "avgCostHint": "Opening cost; updated automatically by goods receipts",
+    "avgCostHintEdit": "Updated automatically by goods receipts",
+    "reorderHint": "Alert when stock falls to this level",
+    "type": {
+      "stock": "Stock product",
+      "service": "Service"
+    },
+    "fields": {
+      "type": "Type",
+      "name": "Name",
+      "sku": "SKU",
+      "barcode": "Barcode",
+      "category": "Category",
+      "unit": "Unit",
+      "salePrice": "Sale price",
+      "avgCost": "Average cost",
+      "reorderLevel": "Reorder level",
+      "vatApplicable": "Subject to VAT",
+      "isActive": "Active",
+      "quantity": "In stock"
+    }
+  },
+  "warehouses": {
+    "title": "Warehouses",
+    "subtitle": "Where your stock is kept.",
+    "add": "Add warehouse",
+    "edit": "Edit warehouse",
+    "default": "Default",
+    "deleteTitle": "Delete warehouse?",
+    "deleteBlocked": "The default warehouse can't be deleted",
+    "fields": {
+      "name": "Warehouse name",
+      "code": "Code",
+      "address": "Address",
+      "isDefault": "Default warehouse",
+      "isActive": "Active"
+    }
+  },
+  "stock": {
+    "title": "Stock",
+    "subtitle": "Quantities per warehouse and every stock movement.",
+    "levels": "Stock levels",
+    "movements": "Movements",
+    "adjust": "Adjust stock",
+    "transfer": "Transfer",
+    "increase": "Add",
+    "decrease": "Remove",
+    "saved": "Stock updated",
+    "lowOnly": "Low stock only",
+    "hideZero": "Hide zero",
+    "reasonPlaceholder": "e.g. Opening stock, damaged, stock count",
+    "sameWarehouse": "Choose two different warehouses",
+    "fields": {
+      "product": "Product",
+      "warehouse": "Warehouse",
+      "quantity": "Quantity",
+      "value": "Value",
+      "date": "Date",
+      "type": "Type",
+      "reason": "Reason / note",
+      "from": "From warehouse",
+      "to": "To warehouse"
+    },
+    "movementType": {
+      "IN": "In",
+      "OUT": "Out",
+      "TRANSFER_IN": "Transfer in",
+      "TRANSFER_OUT": "Transfer out",
+      "ADJUSTMENT": "Adjustment"
+    },
+    "refType": {
+      "invoice": "Sales invoice",
+      "invoiceCancel": "Cancelled invoice",
+      "goodsReceipt": "Goods receipt",
+      "adjustment": "Adjustment",
+      "transfer": "Transfer"
+    }
+  },
+  "suppliers": {
+    "title": "Suppliers",
+    "subtitle": "The companies you buy from and what you owe them.",
+    "add": "Add supplier",
+    "edit": "Edit supplier",
+    "created": "Supplier added successfully",
+    "updated": "Supplier updated successfully",
+    "deleted": "Supplier deleted",
+    "deleteTitle": "Delete supplier?",
+    "deleteMessage": "\"{{name}}\" will be removed from your suppliers list.",
+    "deleteBlocked": "Can't delete a supplier you still owe",
+    "fields": {
+      "name": "Supplier name",
+      "email": "Email",
+      "phone": "Phone",
+      "vatNumber": "VAT number",
+      "address": "Address",
+      "balance": "We owe",
+      "notes": "Notes",
+      "isActive": "Active supplier",
+      "status": "Status"
+    }
+  },
+  "invoices": {
+    "title": "Invoices",
+    "subtitle": "Sales invoices: draft, issue, collect payments.",
+    "new": "New invoice",
+    "edit": "Edit invoice",
+    "titleNumber": "Invoice {{number}}",
+    "draftTitle": "Draft invoice",
+    "saveAndIssue": "Save & issue",
+    "issue": "Issue invoice",
+    "issueTitle": "Issue this invoice?",
+    "issueMessage": "A number is assigned, stock is deducted and the amount is added to the customer balance. Issued invoices can no longer be edited.",
+    "issued": "Invoice issued",
+    "cancel": "Cancel invoice",
+    "cancelTitle": "Cancel this invoice?",
+    "cancelMessage": "Stock is returned and the customer balance is reduced.",
+    "cancelReason": "Reason for cancelling",
+    "cancelled": "Invoice cancelled",
+    "cancelledBecause": "Cancelled: {{reason}}",
+    "deleteTitle": "Delete draft?",
+    "deleteMessage": "This draft invoice will be deleted.",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "fromQuotation": "Created from a quotation",
+    "shortage": "Not enough stock: {{items}}",
+    "shortageItem": "{{product}} (available {{available}})",
+    "fields": {
+      "number": "Number",
+      "issueDate": "Issue date"
+    }
+  },
+  "quotations": {
+    "title": "Quotations",
+    "subtitle": "Price offers you send to customers.",
+    "new": "New quotation",
+    "edit": "Edit quotation",
+    "titleNumber": "Quotation {{number}}",
+    "saveAndSend": "Save & mark as sent",
+    "send": "Mark as sent",
+    "accept": "Accepted",
+    "reject": "Rejected",
+    "convert": "Convert to invoice",
+    "viewInvoice": "View invoice",
+    "sendDone": "Quotation marked as sent",
+    "acceptDone": "Quotation accepted",
+    "rejectDone": "Quotation rejected",
+    "convertTitle": "Convert to invoice?",
+    "convertMessage": "A draft invoice is created with the same items. You can review it before issuing.",
+    "converted": "Draft invoice created",
+    "deleteTitle": "Delete quotation?",
+    "fields": {
+      "number": "Number",
+      "date": "Date"
+    }
+  },
+  "payments": {
+    "title": "Payments",
+    "subtitle": "Money received from customers against invoices.",
+    "add": "Record payment",
+    "record": "Record payment",
+    "recorded": "Payment recorded",
+    "searchInvoice": "Search by invoice number or customer…",
+    "maxAmount": "More than the remaining amount",
+    "method": {
+      "cash": "Cash",
+      "bank_transfer": "Bank transfer",
+      "card": "Card"
+    },
+    "fields": {
+      "number": "Number",
+      "invoice": "Invoice",
+      "amount": "Amount",
+      "method": "Method",
+      "date": "Date",
+      "reference": "Reference"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Purchase orders",
+    "subtitle": "Orders to suppliers and goods receipts.",
+    "new": "New purchase order",
+    "edit": "Edit purchase order",
+    "titleNumber": "Purchase order {{number}}",
+    "saveAndSend": "Save & mark as sent",
+    "send": "Mark as sent",
+    "sent": "Purchase order marked as sent",
+    "receive": "Receive goods",
+    "receiveTitle": "Receive goods · {{number}}",
+    "receiveHint": "Enter the quantity received now for each item. Stock and average cost are updated.",
+    "receivedOf": "Received {{received}} of {{ordered}}",
+    "maxReceive": "Maximum {{max}}",
+    "nothingToReceive": "Enter at least one quantity",
+    "receivedDone": "Goods received",
+    "received": "Received",
+    "cancel": "Cancel order",
+    "cancelTitle": "Cancel this purchase order?",
+    "cancelMessage": "The order will be closed without receiving any goods.",
+    "cancelled": "Purchase order cancelled",
+    "deleteTitle": "Delete purchase order?",
+    "fields": {
+      "number": "Number",
+      "orderDate": "Order date"
+    }
+  }
+}

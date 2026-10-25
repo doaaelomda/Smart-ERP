@@ -1,0 +1,83 @@
+<app-page-header title="customers.title" subtitle="customers.subtitle">
+  <button pButton type="button" (click)="openForm()" *appHasPermission="'customers.create'">
+    <span class="material-symbols-outlined" aria-hidden="true">add</span>
+    {{ 'customers.add' | translate }}
+  </button>
+</app-page-header>
+
+@if (list.error(); as errorKey) {
+  <app-error-banner [message]="errorKey" (retry)="list.reload()" />
+}
+
+<section class="card p-4 sm:p-5">
+  <app-data-table
+    [columns]="columns()"
+    [data]="list.items()"
+    [total]="list.total()"
+    [loading]="list.loading()"
+    [query]="list.query()"
+    (queryChange)="list.query.set($event)"
+  >
+    <ng-template appCell="name" let-row>
+      <div class="flex items-center gap-3 py-1">
+        <span class="icon-tile !size-9 bg-info-soft text-label font-bold text-info" aria-hidden="true">{{ row.name.charAt(0) }}</span>
+        <div class="min-w-0">
+          <p class="m-0 font-semibold text-on-surface">{{ row.name }}</p>
+          @if (row.email) {
+            <p class="m-0 text-caption text-muted"><span class="num">{{ row.email }}</span></p>
+          }
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appCell="creditLimit" let-row>
+      <span class="num">{{ row.creditLimit ? (row.creditLimit | money) : '—' }}</span>
+    </ng-template>
+
+    <ng-template appCell="balance" let-row>
+      <span class="num font-semibold" [class.text-danger]="row.creditLimit > 0 && row.balance > row.creditLimit">
+        {{ row.balance | money }}
+      </span>
+    </ng-template>
+
+    <ng-template appCell="isActive" let-row>
+      <app-status-pill [status]="row.isActive ? 'active' : 'inactive'" />
+    </ng-template>
+
+    <ng-template appCell="actions" let-row>
+      <div class="flex justify-end gap-1">
+        <button
+          pButton
+          type="button"
+          [text]="true"
+          [rounded]="true"
+          severity="secondary"
+          (click)="openForm(row)"
+          [pTooltip]="'common.edit' | translate"
+          tooltipPosition="top"
+          [attr.aria-label]="'common.edit' | translate"
+          *appHasPermission="'customers.update'"
+        >
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+        <ng-container *appHasPermission="'customers.delete'">
+          <!-- Same rule as the API: customers with an outstanding balance can't be deleted. -->
+          <span [pTooltip]="(row.balance !== 0 ? 'customers.deleteBlocked' : 'common.delete') | translate" tooltipPosition="top">
+            <button
+              pButton
+              type="button"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              (click)="delete(row)"
+              [disabled]="row.balance !== 0"
+              [attr.aria-label]="'common.delete' | translate"
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </span>
+        </ng-container>
+      </div>
+    </ng-template>
+  </app-data-table>
+</section>

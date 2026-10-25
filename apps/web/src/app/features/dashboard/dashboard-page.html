@@ -1,0 +1,155 @@
+<!-- Header -->
+<div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+  <div>
+    <div class="mb-1 flex items-center gap-2">
+      <h1 class="m-0 text-headline font-bold">{{ 'dashboard.greeting' | translate: { name: firstName() } }}</h1>
+      <span class="status-pill bg-warning-soft text-warning">{{ 'common.demoData' | translate }}</span>
+    </div>
+    <p class="m-0 text-body text-muted">{{ 'dashboard.subtitle' | translate }}</p>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <app-filter-tabs [options]="periodTabs" [value]="period()" (valueChange)="period.set($any($event))" ariaLabel="Period" />
+    <a pButton routerLink="/app/sales/invoices/new" *appHasPermission="'invoices.create'">
+      <span class="material-symbols-outlined" aria-hidden="true">add</span>
+      {{ 'dashboard.newInvoice' | translate }}
+    </a>
+  </div>
+</div>
+
+<!-- KPIs -->
+<section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="KPIs">
+  @for (kpi of kpis(); track kpi.key) {
+    <article class="card p-5">
+      <div class="mb-4 flex items-start justify-between">
+        <p class="m-0 text-label font-medium text-muted">{{ 'dashboard.kpi.' + kpi.key | translate }}</p>
+        <span class="icon-tile" [class]="kpi.tile">
+          <span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ kpi.icon }}</span>
+        </span>
+      </div>
+      <p class="num m-0 mb-2 text-start text-[1.625rem] font-bold leading-none">
+        {{ kpi.money ? money(kpi.value) : kpi.value }}
+      </p>
+      <p class="m-0 flex items-center gap-1 text-caption text-muted">
+        @let good = kpi.goodWhenUp ? kpi.delta > 0 : kpi.delta < 0;
+        <span class="status-pill" [class]="good ? 'bg-success-soft text-success' : 'bg-danger-soft text-danger'">
+          <span class="material-symbols-outlined text-[14px]" aria-hidden="true">
+            {{ kpi.delta >= 0 ? 'arrow_upward' : 'arrow_downward' }}
+          </span>
+          <span class="num">{{ formatDelta(kpi.delta, kpi.money) }}</span>
+        </span>
+        {{ 'dashboard.kpi.vsLast' | translate }}
+      </p>
+    </article>
+  }
+</section>
+
+<!-- Revenue + Alerts -->
+<section class="mt-4 grid gap-4 xl:grid-cols-3">
+  <article class="card p-5 xl:col-span-2">
+    <header class="mb-6 flex items-center justify-between">
+      <div>
+        <h2 class="m-0 text-title font-semibold">{{ 'dashboard.revenueTrend' | translate }}</h2>
+        <p class="m-0 text-caption text-muted">{{ 'dashboard.revenueTrendHint' | translate }}</p>
+      </div>
+      <p class="num m-0 text-title font-bold">{{ money(kpis()[0]!.value) }}</p>
+    </header>
+
+    <div class="flex h-56 items-end gap-2 sm:gap-3" role="img" [attr.aria-label]="'dashboard.revenueTrend' | translate">
+      @for (bar of revenueBars; track bar.month) {
+        <div class="group flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
+          <div
+            class="relative w-full rounded-t-lg transition-colors"
+            [class]="bar.month >= highlightedFrom() ? 'bg-primary' : 'bg-primary/25 group-hover:bg-primary/50'"
+            [style.height.%]="bar.height"
+          >
+            <span
+              class="num pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-on-surface px-2 py-1 text-caption font-semibold text-surface shadow-card group-hover:block"
+            >
+              {{ money(bar.value, true) }}
+            </span>
+          </div>
+          <span class="w-full truncate text-center text-caption text-muted">{{ monthLabels()[bar.month] }}</span>
+        </div>
+      }
+    </div>
+  </article>
+
+  <article class="card flex flex-col p-5">
+    <header class="mb-4 flex items-center justify-between">
+      <h2 class="m-0 text-title font-semibold">{{ 'dashboard.alerts' | translate }}</h2>
+      <span class="status-pill bg-danger-soft text-danger num">{{ alerts.length }}</span>
+    </header>
+    <ul class="m-0 flex list-none flex-col gap-3 p-0">
+      @for (alert of alerts; track $index) {
+        <li>
+          <a [routerLink]="alert.link" class="flex items-start gap-3 rounded-xl border border-border p-3 text-on-surface no-underline transition-colors hover:bg-app-bg">
+          <span class="icon-tile !size-9" [class]="alert.tile">
+            <span class="material-symbols-outlined text-[18px]" aria-hidden="true">{{ alert.icon }}</span>
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="m-0 text-label font-semibold">{{ 'dashboard.alertTypes.' + alert.type | translate }}</p>
+            <p class="m-0 truncate text-caption text-muted"><bdi>{{ alert.text }}</bdi></p>
+          </div>
+          <span class="text-caption text-muted">{{ alert.at | timeAgo }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </article>
+</section>
+
+<!-- Invoices + Top products -->
+<section class="mt-4 grid gap-4 xl:grid-cols-3">
+  <article class="card overflow-hidden xl:col-span-2">
+    <header class="flex items-center justify-between p-5 pb-3">
+      <h2 class="m-0 text-title font-semibold">{{ 'dashboard.recentInvoices' | translate }}</h2>
+      <a pButton [text]="true" routerLink="/app/sales/invoices">{{ 'common.viewAll' | translate }}</a>
+    </header>
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-body">
+        <thead>
+          <tr class="bg-app-bg text-caption text-muted">
+            <th class="px-5 py-2.5 text-start font-semibold">{{ 'dashboard.table.number' | translate }}</th>
+            <th class="px-5 py-2.5 text-start font-semibold">{{ 'dashboard.table.customer' | translate }}</th>
+            <th class="px-5 py-2.5 text-end font-semibold">{{ 'dashboard.table.total' | translate }}</th>
+            <th class="px-5 py-2.5 text-start font-semibold">{{ 'dashboard.table.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (invoice of invoices; track invoice.number) {
+            <tr class="border-t border-border hover:bg-app-bg/60">
+              <td class="num px-5 py-3 text-start">
+                <a [routerLink]="['/app/sales/invoices', invoice.number]" class="font-semibold text-primary no-underline hover:underline">{{ invoice.number }}</a>
+              </td>
+              <td class="px-5 py-3"><bdi>{{ invoice.customer }}</bdi></td>
+              <td class="num px-5 py-3 text-end font-medium">{{ money(invoice.total) }}</td>
+              <td class="px-5 py-3">
+                <span class="status-pill" [class]="statusStyles[invoice.status]">
+                  {{ 'dashboard.status.' + invoice.status | translate }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="card p-5">
+    <h2 class="m-0 mb-5 text-title font-semibold">{{ 'dashboard.topProducts' | translate }}</h2>
+    <ul class="m-0 flex list-none flex-col gap-5 p-0">
+      @for (product of topProducts; track product.name) {
+        <li>
+          <div class="mb-1.5 flex items-center justify-between gap-3 text-label">
+            <bdi class="truncate font-medium">{{ product.name }}</bdi>
+            <span class="num text-muted">{{ product.sold }}</span>
+          </div>
+          <div class="h-2 overflow-hidden rounded-full bg-surface-container-high">
+            <div class="h-full rounded-full bg-gradient-to-r from-blue-500 to-violet-500" [style.width.%]="product.share"></div>
+          </div>
+        </li>
+      }
+    </ul>
+  </article>
+</section>

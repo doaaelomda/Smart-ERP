@@ -1,0 +1,92 @@
+<div class="flex flex-col gap-3">
+  <!-- Column titles (desktop) -->
+  <div class="hidden grid-cols-12 gap-3 px-1 text-caption font-semibold text-muted lg:grid">
+    <span class="col-span-4">{{ 'documents.fields.item' | translate }}</span>
+    <span class="col-span-1">{{ 'documents.fields.quantity' | translate }}</span>
+    <span class="col-span-2">{{ (mode() === 'purchase' ? 'documents.fields.unitCost' : 'documents.fields.unitPrice') | translate }}</span>
+    <span class="col-span-2">{{ 'documents.fields.discount' | translate }}</span>
+    <span class="col-span-1 text-center">{{ 'documents.fields.vat' | translate: { rate: vatRate } }}</span>
+    <span class="col-span-2 text-end">{{ 'documents.fields.lineTotal' | translate }}</span>
+  </div>
+
+  @for (line of lines().controls; track line; let i = $index) {
+    <div
+      [formGroup]="line"
+      class="grid grid-cols-2 gap-x-3 gap-y-2 rounded-xl border border-border bg-card p-3 transition-colors lg:grid-cols-12 lg:items-start lg:border-transparent lg:p-1 lg:hover:bg-surface-container-low"
+    >
+      <div class="col-span-2 flex flex-col gap-2 lg:col-span-4">
+        <app-remote-autocomplete
+          formControlName="productId"
+          [search]="searchProducts()"
+          [initialLabel]="line.controls.productLabel.value"
+          [placeholder]="mode() === 'purchase' ? 'documents.pickStockProduct' : 'documents.pickProduct'"
+          [dense]="true"
+          (selected)="onProductSelected(line, $event)"
+        />
+        @if (mode() === 'sale') {
+          <input
+            pInputText
+            formControlName="description"
+            class="w-full"
+            [placeholder]="'documents.descriptionPlaceholder' | translate"
+            [attr.aria-label]="'documents.fields.description' | translate"
+          />
+        }
+      </div>
+      <label class="flex flex-col gap-1 lg:col-span-1">
+        <span class="text-caption text-muted lg:hidden">{{ 'documents.fields.quantity' | translate }}</span>
+        <p-inputnumber formControlName="quantity" [min]="0" [maxFractionDigits]="3" locale="en-US" [fluid]="true" [ariaLabel]="'documents.fields.quantity' | translate" />
+      </label>
+      <label class="flex flex-col gap-1 lg:col-span-2">
+        <span class="text-caption text-muted lg:hidden">{{ (mode() === 'purchase' ? 'documents.fields.unitCost' : 'documents.fields.unitPrice') | translate }}</span>
+        <p-inputnumber formControlName="unitPrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" locale="en-US" [fluid]="true" [ariaLabel]="'documents.fields.unitPrice' | translate" />
+      </label>
+      <label class="flex flex-col gap-1 lg:col-span-2">
+        <span class="text-caption text-muted lg:hidden">{{ 'documents.fields.discount' | translate }}</span>
+        <p-inputnumber formControlName="discount" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" locale="en-US" [fluid]="true" [ariaLabel]="'documents.fields.discount' | translate" />
+      </label>
+      <label class="flex items-center gap-2 lg:col-span-1 lg:h-10 lg:justify-center" [pTooltip]="'documents.fields.vat' | translate: { rate: vatRate }" tooltipPosition="top">
+        <p-checkbox formControlName="vatApplicable" [binary]="true" [ariaLabel]="'documents.fields.vat' | translate: { rate: vatRate }" />
+        <span class="text-body lg:hidden">{{ 'documents.fields.vat' | translate: { rate: vatRate } }}</span>
+      </label>
+      <div class="col-span-2 flex items-center justify-between gap-2 lg:col-span-2 lg:h-10 lg:justify-end">
+        <span class="num font-semibold">{{ (totals().lines[i] ?? 0) | money }}</span>
+        <button
+          pButton
+          type="button"
+          [text]="true"
+          [rounded]="true"
+          severity="danger"
+          (click)="remove(i)"
+          [disabled]="lines().length === 1"
+          [pTooltip]="'documents.removeLine' | translate"
+          tooltipPosition="top"
+          [attr.aria-label]="'documents.removeLine' | translate"
+        >
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      </div>
+      @if (line.invalid && line.touched) {
+        <p class="col-span-2 m-0 text-caption text-danger lg:col-span-12">{{ 'documents.lineInvalid' | translate }}</p>
+      }
+    </div>
+  }
+
+  <div>
+    <button pButton type="button" [outlined]="true" severity="secondary" (click)="add()">
+      <span class="material-symbols-outlined" aria-hidden="true">add</span>
+      {{ 'documents.addLine' | translate }}
+    </button>
+  </div>
+
+  <dl class="m-0 ms-auto grid w-full max-w-sm grid-cols-2 gap-y-2 rounded-2xl border border-border bg-surface-container-low p-4 text-body">
+    <dt class="text-muted">{{ 'documents.totals.subtotal' | translate }}</dt>
+    <dd class="num m-0 text-end">{{ totals().subtotal | money }}</dd>
+    <dt class="text-muted">{{ 'documents.totals.discount' | translate }}</dt>
+    <dd class="num m-0 text-end">{{ totals().discountTotal ? '−' : '' }}{{ totals().discountTotal | money }}</dd>
+    <dt class="text-muted">{{ 'documents.totals.vat' | translate }}</dt>
+    <dd class="num m-0 text-end">{{ totals().vatTotal | money }}</dd>
+    <dt class="border-t border-border pt-2 text-title font-bold">{{ 'documents.totals.total' | translate }}</dt>
+    <dd class="num m-0 border-t border-border pt-2 text-end text-title font-bold text-primary">{{ totals().total | money }}</dd>
+  </dl>
+</div>

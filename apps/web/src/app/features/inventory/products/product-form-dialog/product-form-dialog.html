@@ -1,0 +1,73 @@
+<form [formGroup]="form" (ngSubmit)="submit()" novalidate class="flex flex-col gap-4">
+  @if (error(); as errorKey) {
+    <app-error-banner [message]="errorKey" [retryable]="false" />
+  }
+
+  <p-selectbutton
+    formControlName="type"
+    [options]="typeOptions"
+    optionLabel="label"
+    optionValue="value"
+    [allowEmpty]="false"
+    [attr.aria-label]="'products.fields.type' | translate"
+  />
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <app-field class="sm:col-span-2" label="products.fields.name" for="p-name" [control]="form.controls.name">
+      <input pInputText id="p-name" formControlName="name" class="w-full" />
+    </app-field>
+
+    <app-field label="products.fields.sku" for="p-sku" [control]="form.controls.sku">
+      <input pInputText id="p-sku" formControlName="sku" dir="ltr" class="w-full uppercase" />
+    </app-field>
+
+    <app-field label="products.fields.barcode" for="p-barcode" [control]="form.controls.barcode">
+      <input pInputText id="p-barcode" formControlName="barcode" dir="ltr" class="w-full" />
+    </app-field>
+
+    <app-field label="products.fields.category" for="p-category" [control]="form.controls.category">
+      <input pInputText id="p-category" formControlName="category" class="w-full" />
+    </app-field>
+
+    <app-field label="products.fields.unit" for="p-unit" hint="products.unitHint" [control]="form.controls.unit">
+      <input pInputText id="p-unit" formControlName="unit" class="w-full" />
+    </app-field>
+
+    <app-field label="products.fields.salePrice" for="p-price" [control]="form.controls.salePrice">
+      <p-inputnumber inputId="p-price" formControlName="salePrice" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" [suffix]="' ' + currency" locale="en-US" [fluid]="true" />
+    </app-field>
+
+    @if (form.controls.type.value === 'stock') {
+      <app-field
+        label="products.fields.avgCost"
+        for="p-cost"
+        [hint]="isEdit ? 'products.avgCostHintEdit' : 'products.avgCostHint'"
+        [control]="form.controls.avgCost"
+      >
+        <p-inputnumber inputId="p-cost" formControlName="avgCost" [min]="0" [minFractionDigits]="2" [maxFractionDigits]="2" [suffix]="' ' + currency" locale="en-US" [readonly]="isEdit" [fluid]="true" />
+      </app-field>
+
+      <app-field label="products.fields.reorderLevel" for="p-reorder" hint="products.reorderHint" [control]="form.controls.reorderLevel">
+        <p-inputnumber inputId="p-reorder" formControlName="reorderLevel" [min]="0" [maxFractionDigits]="3" locale="en-US" [fluid]="true" />
+      </app-field>
+    }
+
+    <div class="flex flex-col gap-3 sm:col-span-2">
+      <label class="flex items-center gap-3" for="p-vat">
+        <p-toggleswitch inputId="p-vat" formControlName="vatApplicable" />
+        <span class="text-body">{{ 'products.fields.vatApplicable' | translate }}</span>
+      </label>
+      @if (isEdit) {
+        <label class="flex items-center gap-3" for="p-active">
+          <p-toggleswitch inputId="p-active" formControlName="isActive" />
+          <span class="text-body">{{ 'products.fields.isActive' | translate }}</span>
+        </label>
+      }
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2 border-t border-border pt-4">
+    <p-button type="button" [label]="'common.cancel' | translate" severity="secondary" [text]="true" [disabled]="saving()" (onClick)="dialogRef.close()" />
+    <p-button type="submit" [label]="'common.save' | translate" [loading]="saving()" />
+  </div>
+</form>

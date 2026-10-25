@@ -1,0 +1,142 @@
+<header class="flex h-16 items-center gap-1 border-b border-border bg-card/85 px-3 backdrop-blur md:gap-2 md:px-5">
+  <button pButton type="button" [text]="true" [rounded]="true" severity="secondary" (click)="menuToggle.emit()" [attr.aria-label]="'nav.toggleMenu' | translate">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
+
+  <!-- Quick navigation search -->
+  <div class="hidden max-w-md flex-1 md:block">
+    <p-autocomplete
+      [(ngModel)]="searchValue"
+      [suggestions]="searchResults()"
+      optionLabel="labelText"
+      [placeholder]="'common.searchPlaceholder' | translate"
+      [ariaLabel]="'common.search' | translate"
+      [completeOnFocus]="true"
+      [fluid]="true"
+      [showEmptyMessage]="true"
+      [emptyMessage]="'common.noResults' | translate"
+      appendTo="body"
+      (completeMethod)="searchTerm.set($event.query)"
+      (onSelect)="onSearchSelected($event.value)"
+    >
+      <ng-template #item let-link>
+        <span class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-muted" aria-hidden="true">{{ link.icon }}</span>
+          {{ link.labelText }}
+        </span>
+      </ng-template>
+    </p-autocomplete>
+  </div>
+
+  <span class="flex-1"></span>
+
+  <button pButton type="button" [text]="true" severity="secondary" (click)="language.toggle()" [attr.aria-label]="'common.language' | translate">
+    <span class="material-symbols-outlined">translate</span>
+    <span class="hidden sm:inline">{{ 'common.language' | translate }}</span>
+  </button>
+
+  <app-theme-toggle />
+
+  <!-- Notifications -->
+  <p-overlaybadge
+    [value]="notifications.unreadCount() > 99 ? '99+' : notifications.unreadCount()"
+    severity="danger"
+    [badgeDisabled]="notifications.unreadCount() === 0"
+    styleClass="num"
+  >
+    <button
+      pButton
+      type="button"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      (click)="notificationsPanel.toggle($event)"
+      [pTooltip]="'common.notifications' | translate"
+      tooltipPosition="bottom"
+      [attr.aria-label]="'common.notifications' | translate"
+    >
+      <span class="material-symbols-outlined">notifications</span>
+    </button>
+  </p-overlaybadge>
+
+  <p-popover #notificationsPanel styleClass="w-[360px] max-w-[calc(100vw-24px)]">
+    <div class="-m-1">
+      <div class="flex items-center justify-between px-2 pb-2">
+        <span class="text-title font-semibold">{{ 'common.notifications' | translate }}</span>
+        @if (notifications.unreadCount() > 0) {
+          <p-button [label]="'notifications.markAllRead' | translate" [text]="true" size="small" (onClick)="notifications.markAllNotificationsAsRead()" />
+        }
+      </div>
+      <div class="flex max-h-[420px] flex-col gap-1 overflow-y-auto">
+        @for (n of notifications.items(); track n.id) {
+          <button
+            type="button"
+            (click)="openNotification(n); notificationsPanel.hide()"
+            class="flex w-full cursor-pointer items-start gap-3 rounded-xl border-0 bg-transparent p-2 text-start transition-colors hover:bg-surface-container-low"
+            [class.!bg-info-soft]="!n.read"
+          >
+            <span class="icon-tile !size-9" [class]="notificationStyle[n.type].tile">
+              <span class="material-symbols-outlined !text-[18px]" aria-hidden="true">{{ notificationStyle[n.type].icon }}</span>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-label leading-snug text-on-surface" [class.font-semibold]="!n.read">
+                {{ n.messageKey | translate: n.params }}
+              </span>
+              <span class="block text-caption text-muted">{{ n.createdAt | timeAgo }}</span>
+            </span>
+            @if (!n.read) {
+              <span class="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-hidden="true"></span>
+            }
+          </button>
+        } @empty {
+          <div class="flex flex-col items-center gap-2 p-6 text-center text-muted">
+            <span class="material-symbols-outlined !text-[32px]" aria-hidden="true">notifications_off</span>
+            <p class="m-0 text-body">{{ 'notifications.empty' | translate }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </p-popover>
+
+  <!-- User menu -->
+  <button
+    type="button"
+    (click)="userPanel.toggle($event)"
+    class="ms-1 flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-gradient-to-br from-[#1d4ed8] to-[#7c3aed] text-label font-bold text-white ring-2 ring-transparent transition hover:ring-primary/30"
+    [attr.aria-label]="'common.profile' | translate"
+  >
+    {{ initials() }}
+  </button>
+
+  <p-popover #userPanel styleClass="min-w-[260px]">
+    @if (auth.user(); as user) {
+      <div class="px-1 pb-3">
+        <p class="m-0 text-body font-semibold text-on-surface">{{ user.name }}</p>
+        <p class="m-0 text-caption text-muted" dir="ltr">{{ user.email }}</p>
+        <div class="mt-2 flex flex-wrap items-center gap-1.5 text-caption">
+          <p-tag [value]="'roles.' + user.role.name | translate" severity="info" [rounded]="true" />
+          <span class="text-muted">{{ user.tenant.name }}</span>
+        </div>
+      </div>
+      <p-divider styleClass="!my-1" />
+    }
+    <div class="flex flex-col">
+      <a
+        routerLink="/app/settings"
+        (click)="userPanel.hide()"
+        class="flex items-center gap-3 rounded-lg px-2 py-2 text-body text-on-surface no-underline hover:bg-surface-container-low"
+      >
+        <span class="material-symbols-outlined text-muted" aria-hidden="true">settings</span>
+        {{ 'nav.settings' | translate }}
+      </a>
+      <button
+        type="button"
+        (click)="userPanel.hide(); auth.logout()"
+        class="flex cursor-pointer items-center gap-3 rounded-lg border-0 bg-transparent px-2 py-2 text-start text-body text-danger hover:bg-danger-soft"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+        {{ 'common.logout' | translate }}
+      </button>
+    </div>
+  </p-popover>
+</header>

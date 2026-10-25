@@ -1,0 +1,212 @@
+/* PrimeNG styles live in their own layer: Tailwind utilities (later layer) always win. */
+@layer theme, base, primeng, components, utilities;
+
+@import 'tailwindcss';
+/* PrimeNG <-> Tailwind bridge: bg-primary, text-muted-color, surface-0..950, p-* variants … */
+@import 'tailwindcss-primeui';
+
+/* `dark:` utilities follow the .dark class set by ThemeService (not only the OS setting). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens. Brand colors come from the PrimeNG theme (core/theme/primeng-preset.ts),
+ * so Tailwind utilities and PrimeNG components share one color system.
+ * Use logical utilities (ms-*, me-*, ps-*, pe-*, start-*, end-*) so RTL/LTR work automatically.
+ */
+@theme inline {
+  --font-sans: 'Cairo', ui-sans-serif, system-ui, sans-serif;
+
+  --color-on-primary: var(--p-primary-contrast-color);
+  --color-primary-container: var(--p-highlight-background);
+  --color-surface: var(--app-card);
+  --color-surface-container-low: var(--app-surface-low);
+  --color-surface-container-high: var(--app-surface-high);
+  --color-on-surface: var(--p-text-color);
+  --color-on-surface-variant: var(--p-text-muted-color);
+  --color-outline-variant: var(--app-border);
+  --color-error: var(--app-danger);
+
+  /* App surfaces & status colors: values live in :root / .dark below (light & dark mode). */
+  --color-app-bg: var(--app-bg);
+  --color-card: var(--app-card);
+  --color-border: var(--app-border);
+  --color-muted: var(--app-muted);
+
+  --color-success: var(--app-success);
+  --color-success-soft: var(--app-success-soft);
+  --color-warning: var(--app-warning);
+  --color-warning-soft: var(--app-warning-soft);
+  --color-danger: var(--app-danger);
+  --color-danger-soft: var(--app-danger-soft);
+  --color-info: var(--app-info);
+  --color-info-soft: var(--app-info-soft);
+  --color-violet: var(--app-violet);
+  --color-violet-soft: var(--app-violet-soft);
+
+  /* Typography scale */
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.2;
+  --text-headline: 1.5rem;
+  --text-title: 1.125rem;
+  --text-body: 0.9375rem;
+  --text-label: 0.8125rem;
+  --text-caption: 0.75rem;
+
+  --shadow-card: var(--app-shadow-card);
+  --shadow-elevated: var(--app-shadow-elevated);
+}
+
+:root {
+  color-scheme: light;
+  --app-bg: #f5f7fb;
+  --app-card: #ffffff;
+  --app-surface-low: #f4f6fa;
+  --app-surface-high: #e8ecf3;
+  --app-border: #e6e9f0;
+  --app-muted: #667085;
+  --app-success: #12805c;
+  --app-success-soft: #e7f6ef;
+  --app-warning: #b54708;
+  --app-warning-soft: #fef3e6;
+  --app-danger: #c4320a;
+  --app-danger-soft: #fdecea;
+  --app-info: #175cd3;
+  --app-info-soft: #e8f0fe;
+  --app-violet: #6d28d9;
+  --app-violet-soft: #f1ebfe;
+  --app-shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+  --app-shadow-elevated: 0 12px 32px -8px rgb(16 24 40 / 0.18);
+}
+
+.dark {
+  color-scheme: dark;
+  --app-bg: #0b1020;
+  --app-card: #121a2e;
+  --app-surface-low: #18213a;
+  --app-surface-high: #232d45;
+  --app-border: #232d45;
+  --app-muted: #98a2b8;
+  --app-success: #4ade9b;
+  --app-success-soft: rgb(18 128 92 / 0.18);
+  --app-warning: #fbbf6a;
+  --app-warning-soft: rgb(181 71 8 / 0.2);
+  --app-danger: #fb8a7a;
+  --app-danger-soft: rgb(196 50 10 / 0.2);
+  --app-info: #8ab4ff;
+  --app-info-soft: rgb(23 92 211 / 0.22);
+  --app-violet: #c4a8ff;
+  --app-violet-soft: rgb(109 40 217 / 0.22);
+  --app-shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+  --app-shadow-elevated: 0 16px 40px -12px rgb(0 0 0 / 0.6);
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-border bg-card shadow-card;
+  }
+  .icon-tile {
+    @apply inline-flex size-10 shrink-0 items-center justify-center rounded-xl;
+  }
+  .status-pill {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-caption font-semibold;
+  }
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-app-bg);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers stay LTR inside RTL text (amounts, invoice numbers). */
+.num {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Material Symbols are the app's icon font (used inside PrimeNG buttons, menus and tags too). */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* PrimeNG tweaks that tokens don't cover. */
+@layer components {
+  /* Dialog body text follows the app font. */
+  .p-dialog,
+  .p-toast,
+  .p-popover,
+  .p-menu,
+  .p-select-overlay,
+  .p-autocomplete-overlay,
+  .p-datepicker-panel {
+    font-family: var(--font-sans);
+  }
+  /* Form controls fill their field by default. */
+  app-field .p-inputtext,
+  app-field .p-select,
+  app-field .p-autocomplete,
+  app-field .p-inputnumber,
+  app-field .p-datepicker,
+  app-field .p-password {
+    width: 100%;
+  }
+  .p-datatable .p-datatable-thead > tr > th {
+    font-size: var(--text-caption);
+    text-transform: none;
+    font-weight: 600;
+    color: var(--p-text-muted-color);
+    background: var(--app-surface-low);
+  }
+}
+
+/* Printing documents: only the page content. */
+@media print {
+  app-sidebar,
+  .p-drawer,
+  app-header,
+  app-page-header button,
+  app-page-header a,
+  .p-toast {
+    display: none !important;
+  }
+  .app-main {
+    margin: 0 !important;
+  }
+  body,
+  .card {
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Invalid state for any PrimeNG input inside <app-field> (no need to bind [invalid] everywhere). */
+@layer components {
+  app-field[data-invalid] .p-inputtext,
+  app-field[data-invalid] .p-select,
+  app-field[data-invalid] .p-autocomplete-input,
+  app-field[data-invalid] .p-inputnumber-input,
+  app-field[data-invalid] .p-textarea,
+  app-field[data-invalid] .p-datepicker-input {
+    border-color: var(--p-inputtext-invalid-border-color);
+  }
+}
+
+/* PrimeNG tabs: the sliding ink bar is positioned for LTR only — mark the active tab itself instead. */
+@layer components {
+  .p-tablist-active-bar {
+    display: none;
+  }
+  .p-tab.p-tab-active {
+    border-bottom-color: var(--p-primary-color);
+  }
+}

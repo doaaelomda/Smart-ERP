@@ -1,0 +1,93 @@
+<section class="card mb-4 grid gap-4 p-4 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+  <div>
+    <p class="m-0 text-caption text-muted">{{ partyLabel() | translate }}</p>
+    <p class="m-0 mt-1 text-title font-semibold">{{ partyName() }}</p>
+  </div>
+  @for (item of meta(); track item.labelKey) {
+    <div>
+      <p class="m-0 text-caption text-muted">{{ item.labelKey | translate }}</p>
+      <p class="m-0 mt-1 font-semibold" [class.text-danger]="item.danger">
+        @switch (item.type) {
+          @case ('date') {
+            {{ $any(item.value) | localDate }}
+          }
+          @case ('money') {
+            <span class="num">{{ $any(item.value) | money }}</span>
+          }
+          @default {
+            <span [class.num]="true">{{ item.value || '—' }}</span>
+          }
+        }
+      </p>
+    </div>
+  }
+</section>
+
+<section class="card mb-4 overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-body">
+      <thead class="bg-surface-container-low text-start text-caption text-muted">
+        <tr>
+          <th class="px-4 py-3 text-start font-semibold">#</th>
+          <th class="px-4 py-3 text-start font-semibold">{{ 'documents.fields.item' | translate }}</th>
+          <th class="px-4 py-3 text-end font-semibold">{{ 'documents.fields.quantity' | translate }}</th>
+          @if (showReceived()) {
+            <th class="px-4 py-3 text-end font-semibold">{{ 'purchaseOrders.received' | translate }}</th>
+          }
+          <th class="px-4 py-3 text-end font-semibold">{{ priceLabel() | translate }}</th>
+          <th class="px-4 py-3 text-end font-semibold">{{ 'documents.fields.discount' | translate }}</th>
+          <th class="px-4 py-3 text-end font-semibold">{{ 'documents.totals.vat' | translate }}</th>
+          <th class="px-4 py-3 text-end font-semibold">{{ 'documents.fields.lineTotal' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (line of lines(); track $index) {
+          <tr class="border-t border-border">
+            <td class="px-4 py-3 text-muted">{{ $index + 1 }}</td>
+            <td class="px-4 py-3">
+              <span class="font-semibold">{{ line.description }}</span>
+              @if (line.productType === 'service' || !line.productId) {
+                <span class="ms-2 text-caption text-muted">{{ 'products.type.service' | translate }}</span>
+              }
+            </td>
+            <td class="num px-4 py-3 text-end">{{ line.quantity | qty }}</td>
+            @if (showReceived()) {
+              <td class="num px-4 py-3 text-end" [class.text-success]="line.receivedQty === line.quantity">{{ line.receivedQty ?? 0 | qty }}</td>
+            }
+            <td class="num px-4 py-3 text-end">{{ line.unitPrice | money }}</td>
+            <td class="num px-4 py-3 text-end">{{ line.discount ? (line.discount | money) : '—' }}</td>
+            <td class="num px-4 py-3 text-end">{{ line.vatRate ? (line.lineVat | money) : '—' }}</td>
+            <td class="num px-4 py-3 text-end font-semibold">{{ line.lineTotal | money }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex flex-col gap-4 border-t border-border p-4 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+    <div class="max-w-md">
+      @if (notes()) {
+        <p class="m-0 text-caption text-muted">{{ 'documents.fields.notes' | translate }}</p>
+        <p class="m-0 mt-1 whitespace-pre-line">{{ notes() }}</p>
+      }
+    </div>
+    <dl class="m-0 grid w-full max-w-sm grid-cols-2 gap-y-2">
+      <dt class="text-muted">{{ 'documents.totals.subtotal' | translate }}</dt>
+      <dd class="num m-0 text-end">{{ totals().subtotal | money }}</dd>
+      @if (totals().discountTotal) {
+        <dt class="text-muted">{{ 'documents.totals.discount' | translate }}</dt>
+        <dd class="num m-0 text-end">−{{ totals().discountTotal | money }}</dd>
+      }
+      <dt class="text-muted">{{ 'documents.totals.vat' | translate }}</dt>
+      <dd class="num m-0 text-end">{{ totals().vatTotal | money }}</dd>
+      <dt class="border-t border-border pt-2 font-bold">{{ 'documents.totals.total' | translate }}</dt>
+      <dd class="num m-0 border-t border-border pt-2 text-end font-bold">{{ totals().total | money }}</dd>
+      @if (totals().paidAmount !== undefined) {
+        <dt class="text-muted">{{ 'invoices.paid' | translate }}</dt>
+        <dd class="num m-0 text-end text-success">{{ totals().paidAmount! | money }}</dd>
+        <dt class="font-semibold">{{ 'invoices.remaining' | translate }}</dt>
+        <dd class="num m-0 text-end font-semibold">{{ totals().total - totals().paidAmount! | money }}</dd>
+      }
+    </dl>
+  </div>
+</section>

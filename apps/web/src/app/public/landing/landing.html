@@ -1,0 +1,175 @@
+<div [dir]="language.direction()" class="min-h-full bg-card">
+  <!-- Nav -->
+  <header class="sticky top-0 z-20 border-b border-border/70 bg-card/80 backdrop-blur">
+    <div class="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
+      <app-logo />
+      <nav class="hidden items-center gap-6 text-body text-muted md:flex">
+        <a routerLink="/" fragment="features" class="no-underline hover:text-on-surface">{{ 'landing.nav.features' | translate }}</a>
+        <a routerLink="/" fragment="how" class="no-underline hover:text-on-surface">{{ 'landing.nav.how' | translate }}</a>
+      </nav>
+      <span class="flex-1"></span>
+      <app-theme-toggle />
+      <button pButton [text]="true" type="button" (click)="language.toggle()">
+        {{ 'common.language' | translate }}
+      </button>
+      <a pButton [text]="true" routerLink="/auth/login" class="!hidden sm:!inline-flex">{{ 'landing.nav.login' | translate }}</a>
+      <a pButton routerLink="/auth/register" class="!hidden sm:!inline-flex">{{ 'landing.nav.start' | translate }}</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+      <div
+        class="pointer-events-none absolute -top-40 start-1/2 size-[640px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-200/60 via-violet-200/40 to-transparent blur-3xl rtl:translate-x-1/2 dark:opacity-30"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 lg:grid-cols-2 lg:py-24">
+        <div class="flex flex-col items-start gap-6">
+          <span class="status-pill border border-info/30 bg-info-soft px-3 py-1 text-info">
+            <span class="material-symbols-outlined text-[16px]" aria-hidden="true">verified</span>
+            {{ 'landing.badge' | translate }}
+          </span>
+
+          <h1 class="m-0 text-[2.25rem] font-extrabold leading-tight tracking-tight sm:text-display">
+            {{ 'landing.title' | translate }}
+            <span class="bg-gradient-to-l from-[#1d4ed8] to-[#7c3aed] bg-clip-text text-transparent">
+              {{ 'landing.titleHighlight' | translate }}
+            </span>
+          </h1>
+
+          <p class="m-0 max-w-xl text-title leading-relaxed text-muted">{{ 'landing.subtitle' | translate }}</p>
+
+          <div class="flex flex-wrap gap-3">
+            <a pButton routerLink="/auth/register" class="!h-12 !px-6">
+              {{ 'landing.cta' | translate }}
+            </a>
+            <a pButton [outlined]="true" routerLink="/" fragment="features" class="!h-12 !px-6">{{ 'landing.secondaryCta' | translate }}</a>
+          </div>
+
+          <ul class="m-0 flex list-none flex-wrap gap-x-5 gap-y-2 p-0 text-label text-muted">
+            @for (check of checks; track check) {
+              <li class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[18px] text-success" aria-hidden="true">check_circle</span>
+                {{ 'landing.checks.' + check | translate }}
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Decorative product preview -->
+        <div class="relative" aria-hidden="true">
+          <div class="card overflow-hidden !shadow-elevated">
+            <div class="flex items-center gap-1.5 border-b border-border bg-surface-container-low px-4 py-3">
+              <span class="size-2.5 rounded-full bg-red-300"></span>
+              <span class="size-2.5 rounded-full bg-amber-300"></span>
+              <span class="size-2.5 rounded-full bg-green-300"></span>
+            </div>
+            <div class="grid gap-4 p-5">
+              <div class="grid grid-cols-3 gap-3">
+                @for (tile of ['bg-info-soft', 'bg-success-soft', 'bg-warning-soft']; track tile) {
+                  <div class="rounded-xl border border-border p-3">
+                    <div class="mb-2 h-2 w-12 rounded bg-surface-container-high"></div>
+                    <div class="h-4 w-20 rounded" [class]="tile"></div>
+                  </div>
+                }
+              </div>
+              <div class="rounded-xl border border-border p-4">
+                <div class="mb-4 h-2 w-24 rounded bg-surface-container-high"></div>
+                <div class="flex h-36 items-end gap-2">
+                  @for (bar of previewBars; track $index) {
+                    <div
+                      class="flex-1 rounded-t-md bg-gradient-to-t from-blue-500 to-violet-400"
+                      [style.height.%]="bar"
+                    ></div>
+                  }
+                </div>
+              </div>
+              <div class="grid gap-2">
+                @for (row of [1, 2, 3]; track row) {
+                  <div class="flex items-center gap-3 rounded-lg border border-border px-3 py-2">
+                    <div class="size-7 rounded-full bg-surface-container-high"></div>
+                    <div class="h-2 flex-1 rounded bg-surface-container-high"></div>
+                    <div
+                      class="h-4 w-14 rounded-full"
+                      [class]="row === 2 ? 'bg-warning-soft' : 'bg-success-soft'"
+                    ></div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="scroll-mt-20 bg-app-bg py-20">
+      <div class="mx-auto max-w-6xl px-4">
+        <div class="mx-auto mb-12 max-w-2xl text-center">
+          <h2 class="m-0 mb-3 text-[1.875rem] font-bold">{{ 'landing.featuresTitle' | translate }}</h2>
+          <p class="m-0 text-title text-muted">{{ 'landing.featuresSubtitle' | translate }}</p>
+        </div>
+        <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          @for (feature of features; track feature.key) {
+            <article class="card p-6 transition-shadow hover:shadow-elevated">
+              <span class="icon-tile mb-4" [class]="feature.tile">
+                <span class="material-symbols-outlined" aria-hidden="true">{{ feature.icon }}</span>
+              </span>
+              <h3 class="m-0 mb-2 text-title font-semibold">
+                {{ 'landing.features.' + feature.key + '.title' | translate }}
+              </h3>
+              <p class="m-0 text-body leading-relaxed text-muted">
+                {{ 'landing.features.' + feature.key + '.text' | translate }}
+              </p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how" class="scroll-mt-20 py-20">
+      <div class="mx-auto max-w-6xl px-4">
+        <h2 class="m-0 mb-12 text-center text-[1.875rem] font-bold">{{ 'landing.howTitle' | translate }}</h2>
+        <ol class="m-0 grid list-none gap-6 p-0 md:grid-cols-3">
+          @for (step of steps; track step; let i = $index) {
+            <li class="flex flex-col items-center gap-3 text-center">
+              <span
+                class="flex size-12 items-center justify-center rounded-full bg-primary text-title font-bold text-on-primary"
+              >
+                {{ i + 1 }}
+              </span>
+              <h3 class="m-0 text-title font-semibold">{{ 'landing.steps.' + step + '.title' | translate }}</h3>
+              <p class="m-0 max-w-xs text-body text-muted">{{ 'landing.steps.' + step + '.text' | translate }}</p>
+            </li>
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="px-4 pb-20">
+      <div
+        class="mx-auto flex max-w-6xl flex-col items-center gap-5 rounded-3xl bg-gradient-to-br from-[#1d4ed8] to-[#7c3aed] px-6 py-14 text-center text-white"
+      >
+        <h2 class="m-0 text-[1.875rem] font-bold">{{ 'landing.ctaTitle' | translate }}</h2>
+        <p class="m-0 max-w-xl text-title text-white/80">{{ 'landing.ctaText' | translate }}</p>
+        <a
+          routerLink="/auth/register"
+          class="inline-flex h-12 items-center rounded-full bg-white px-7 text-body font-semibold text-[#1d4ed8] no-underline shadow-card hover:bg-white/90"
+        >
+          {{ 'landing.cta' | translate }}
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-border py-8">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 sm:flex-row">
+      <app-logo />
+      <p class="m-0 text-label text-muted">{{ 'landing.footer' | translate }}</p>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,29 @@
+{
+  "name": "smart-erp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Smart ERP — multi-tenant business management system (Angular + Express + MongoDB)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "postinstall": "npm run build -w @erp/shared",
+    "dev": "concurrently -n shared,api,web -c magenta,cyan,green \"npm run dev -w @erp/shared\" \"npm run dev -w @erp/api\" \"npm run start -w web\"",
+    "dev:api": "npm run dev -w @erp/api",
+    "dev:web": "npm run start -w web",
+    "build": "npm run build -w @erp/shared && npm run build -w @erp/api && npm run build -w web",
+    "test": "npm run test -w @erp/shared && npm run test -w @erp/api && npm run test -w web -- --watch=false",
+    "typecheck": "npm run typecheck -w @erp/shared && npm run typecheck -w @erp/api",
+    "format": "prettier --write \"**/*.{ts,html,css,json,md}\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^5.0.5"
+  }
+}

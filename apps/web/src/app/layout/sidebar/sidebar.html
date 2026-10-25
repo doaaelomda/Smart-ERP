@@ -1,0 +1,37 @@
+<div class="flex h-full flex-col">
+  <div class="flex h-16 shrink-0 items-center border-b border-border px-5">
+    <app-logo />
+  </div>
+
+  <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Main">
+    @for (group of groups(); track group.label; let first = $first) {
+      <p
+        class="mb-1 px-3 text-caption font-semibold uppercase tracking-wide text-muted"
+        [class.mt-5]="!first"
+      >
+        {{ group.label | translate }}
+      </p>
+      <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+        @for (link of group.links; track link.route) {
+          <li>
+            <a
+              [routerLink]="link.route"
+              routerLinkActive="is-active"
+              #rla="routerLinkActive"
+              [attr.aria-current]="rla.isActive ? 'page' : null"
+              (click)="navigate.emit()"
+              class="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-body text-on-surface-variant no-underline transition-colors hover:bg-surface-container-low hover:text-on-surface [&.is-active]:bg-primary-container/60 [&.is-active]:font-semibold [&.is-active]:text-primary"
+            >
+              <span
+                class="absolute inset-y-2 start-0 w-1 rounded-full bg-primary opacity-0 group-[.is-active]:opacity-100"
+                aria-hidden="true"
+              ></span>
+              <span class="material-symbols-outlined text-[20px]" aria-hidden="true">{{ link.icon }}</span>
+              <span>{{ link.label | translate }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </nav>
+</div>

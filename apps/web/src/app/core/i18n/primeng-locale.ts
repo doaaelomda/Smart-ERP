@@ -1,0 +1,45 @@
+import type { Translation } from 'primeng/api';
+import type { Language } from '@erp/shared';
+
+/** PrimeNG built-in texts (date picker, paginator, empty messages) per app language. */
+export const PRIMENG_LOCALE: Record<Language, Translation> = {
+  ar: {
+    dayNames: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+    dayNamesShort: ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'],
+    dayNamesMin: ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
+    monthNames: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+    monthNamesShort: ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس'],
+    firstDayOfWeek: 6,
+    today: 'اليوم',
+    clear: 'مسح',
+    weekHeader: 'أسبوع',
+    emptyMessage: 'لا توجد نتائج',
+    emptySearchMessage: 'لا توجد نتائج',
+    emptySelectionMessage: 'لم يتم الاختيار',
+    selectionMessage: '{0} عناصر محددة',
+    accept: 'نعم',
+    reject: 'لا',
+    choose: 'اختر',
+    cancel: 'إلغاء',
+    aria: { close: 'إغلاق', previous: 'السابق', next: 'التالي', firstPageLabel: 'الصفحة الأولى', lastPageLabel: 'الصفحة الأخيرة', nextPageLabel: 'الصفحة التالية', prevPageLabel: 'الصفحة السابقة', rowsPerPageLabel: 'عدد الصفوف' },
+  },
+  en: {
+    dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    dayNamesMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    firstDayOfWeek: 6,
+    today: 'Today',
+    clear: 'Clear',
+    weekHeader: 'Wk',
+    emptyMessage: 'No results',
+    emptySearchMessage: 'No results',
+    emptySelectionMessage: 'Nothing selected',
+    selectionMessage: '{0} items selected',
+    accept: 'Yes',
+    reject: 'No',
+    choose: 'Choose',
+    cancel: 'Cancel',
+  },
+};
