@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd ../.. && npm ci --include=dev",
+  "buildCommand": "cd ../.. && npm run build -w @erp/shared && npm run build -w @erp/api",
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.js": { "includeFiles": "{dist/**,../../node_modules/swagger-ui-dist/**}", "maxDuration": 30 }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}
