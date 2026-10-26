@@ -5,7 +5,7 @@
   "buildCommand": "cd ../.. && npm run build -w @erp/shared && npm run build -w @erp/api",
   "outputDirectory": "public",
   "functions": {
-    "api/index.js": { "includeFiles": "{dist/**,../../node_modules/swagger-ui-dist/**}", "maxDuration": 30 }
+    "api/index.js": { "includeFiles": "{dist/**,../../packages/shared/**,../../node_modules/swagger-ui-dist/**}", "maxDuration": 30 }
   },
   "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
 }
