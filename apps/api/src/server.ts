@@ -1,10 +1,12 @@
 import { createApp } from './app.js';
+import { syncSuperAdmins } from './modules/auth/super-admins.js';
 import { connectDatabase, disconnectDatabase } from './config/db.js';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 
 async function bootstrap(): Promise<void> {
   await connectDatabase();
+  await syncSuperAdmins();
 
   const server = createApp().listen(env.PORT, () => {
     logger.info(`API running on http://localhost:${env.PORT}/api/v1`);

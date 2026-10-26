@@ -2,6 +2,8 @@ import cors from 'cors';
 import express, { type Express } from 'express';
 import helmet from 'helmet';
 import { pinoHttp } from 'pino-http';
+import swaggerUi from 'swagger-ui-express';
+import { openApiSpec } from './config/openapi.js';
 import { env } from './config/env.js';
 import { logger } from './config/logger.js';
 import { errorHandler, notFoundHandler } from './core/middlewares/error-handler.js';
@@ -12,6 +14,9 @@ export function createApp(): Express {
 
   app.disable('x-powered-by');
   app.set('trust proxy', env.TRUST_PROXY);
+
+  // Swagger UI needs inline scripts, so it is mounted before helmet's strict CSP.
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openApiSpec, { customSiteTitle: 'Smart ERP API' }));
 
   app.use(helmet());
   app.use(cors({ origin: env.CLIENT_URL, credentials: true }));

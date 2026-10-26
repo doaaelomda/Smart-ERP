@@ -25,3 +25,6 @@ Thumbs.db
 
 # Developer-only tool: creates the first admin account (not shipped with the source code)
 apps/api/src/scripts/create-admin.ts
+
+# SuperAdmins list (local copy; the live server uses the SUPER_ADMINS env var)
+apps/api/super-admins.json

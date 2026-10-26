@@ -63,13 +63,15 @@ export interface AdminInput {
   companyName: string;
   name: string;
   email: string;
-  password: string;
+  /** Plain password (hashed here) or an already hashed one. */
+  password?: string;
+  passwordHash?: string;
   language?: Language;
 }
 
 /** Creates the company, its two roles (SuperAdmin, Accountant) and the one SuperAdmin user. */
 export async function createAdmin(input: AdminInput): Promise<void> {
-  const passwordHash = await bcrypt.hash(input.password, env.BCRYPT_ROUNDS);
+  const passwordHash = input.passwordHash ?? (await bcrypt.hash(input.password ?? '', env.BCRYPT_ROUNDS));
   const language: Language = input.language ?? 'ar';
 
   const { userId, tenantId } = await withTransaction(async (session) => {
