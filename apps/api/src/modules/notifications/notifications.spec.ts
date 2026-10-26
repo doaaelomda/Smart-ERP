@@ -4,15 +4,14 @@ import { createApp } from '../../app.js';
 import { useTestDatabase } from '../../test/db.js';
 import { UserModel } from '../users/user.model.js';
 import { notify } from './notification.service.js';
+import { loginAdmin } from '../../test/api-client.js';
 
 useTestDatabase();
 const app = createApp();
 
 async function register(email: string, companyName: string) {
-  const res = await request(app)
-    .post('/api/v1/auth/register')
-    .send({ companyName, name: 'Owner', email, password: 'secret123', language: 'en' });
-  expect(res.status).toBe(201);
+  const res = await loginAdmin(app, email, companyName);
+  expect(res.status).toBe(200);
   return { token: `Bearer ${res.body.data.accessToken as string}`, tenantId: res.body.data.user.tenant.id as string };
 }
 

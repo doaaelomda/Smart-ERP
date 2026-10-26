@@ -18,7 +18,7 @@ export interface AuthUser {
   tenant: AuthTenant;
 }
 
-/** Returned by register, login and refresh. The refresh token travels in an httpOnly cookie. */
+/** Returned by login. */
 export interface AuthSession {
   accessToken: string;
   /** Access token lifetime in seconds. */
@@ -26,17 +26,41 @@ export interface AuthSession {
   user: AuthUser;
 }
 
-export interface RegisterRequest {
-  companyName: string;
-  name: string;
-  email: string;
-  password: string;
-  language?: Language;
-}
-
 export interface LoginRequest {
   email: string;
   password: string;
+}
+
+/** A user as listed on the Users screen (never includes the password). */
+export interface ManagedUser {
+  _id: string;
+  name: string;
+  email: string;
+  isActive: boolean;
+  language: Language;
+  lastLoginAt?: string;
+  createdAt: string;
+  role: { id: string; name: string } | null;
+}
+
+export interface RoleOption {
+  _id: string;
+  name: string;
+}
+
+export interface CreateUserInput {
+  name: string;
+  email: string;
+  password: string;
+  roleId: string;
+}
+
+/** `password` resets the password; every field is optional. */
+export interface UpdateUserInput {
+  name?: string;
+  roleId?: string;
+  isActive?: boolean;
+  password?: string;
 }
 
 /** Shared password rule: at least 8 chars with at least one letter and one number. */

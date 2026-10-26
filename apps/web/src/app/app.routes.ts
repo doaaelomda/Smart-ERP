@@ -42,11 +42,6 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/login/login-page').then((m) => m.LoginPage),
         title: 'Sign in · Smart ERP',
       },
-      {
-        path: 'register',
-        loadComponent: () => import('./features/auth/register/register-page').then((m) => m.RegisterPage),
-        title: 'Create account · Smart ERP',
-      },
     ],
   },
   {
@@ -130,6 +125,13 @@ export const routes: Routes = [
               import('./features/purchasing/orders/purchase-order-details-page').then((m) => m.PurchaseOrderDetailsPage),
           }),
         ],
+      },
+      {
+        path: 'users',
+        canActivate: [permissionGuard],
+        data: { permission: 'users.view' },
+        loadComponent: () => import('./features/users/users-page').then((m) => m.UsersPage),
+        title: 'Users · Smart ERP',
       },
       // Modules not built yet stay inside the shell instead of falling back to the landing page.
       {

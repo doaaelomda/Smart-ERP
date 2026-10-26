@@ -32,6 +32,7 @@
     "typeToSearch": "اكتب للبحث…"
   },
   "nav": {
+    "users": "المستخدمون",
     "main": "الرئيسية",
     "dashboard": "لوحة التحكم",
     "sales": "المبيعات",
@@ -226,10 +227,7 @@
     "INVALID_STATUS_TRANSITION": "هذا الإجراء غير مسموح في الحالة الحالية"
   },
   "roles": {
-    "Owner": "المالك",
-    "Admin": "مدير",
-    "Sales": "مبيعات",
-    "Inventory": "مخازن",
+    "SuperAdmin": "مدير النظام",
     "Accountant": "محاسب"
   },
   "notifications": {
@@ -417,6 +415,21 @@
       "goodsReceipt": "استلام بضاعة",
       "adjustment": "تسوية",
       "transfer": "تحويل"
+    }
+  },
+  "users": {
+    "title": "المستخدمون",
+    "subtitle": "أنشئ حسابات فريقك وحدد صلاحيات كل شخص.",
+    "add": "إضافة مستخدم",
+    "edit": "تعديل مستخدم",
+    "deleteTitle": "حذف المستخدم؟",
+    "fields": {
+      "name": "الاسم بالكامل",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "password": "كلمة المرور",
+      "newPassword": "كلمة مرور جديدة (اتركها فارغة للإبقاء)",
+      "isActive": "حساب مفعّل"
     }
   },
   "suppliers": {

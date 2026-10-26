@@ -22,3 +22,6 @@ npm-debug.log*
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db
+
+# Developer-only tool: creates the first admin account (not shipped with the source code)
+apps/api/src/scripts/create-admin.ts

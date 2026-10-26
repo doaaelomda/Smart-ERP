@@ -3,15 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { createApp } from '../../app.js';
 import { useTestDatabase } from '../../test/db.js';
 import { CustomerModel } from './customer.model.js';
+import { loginAdmin } from '../../test/api-client.js';
 
 useTestDatabase();
 const app = createApp();
 
 async function registerTenant(email = 'owner@example.com', companyName = 'Nile Trading') {
-  const res = await request(app)
-    .post('/api/v1/auth/register')
-    .send({ companyName, name: 'Owner', email, password: 'secret123', language: 'en' });
-  expect(res.status).toBe(201);
+  const res = await loginAdmin(app, email, companyName);
+  expect(res.status).toBe(200);
   return `Bearer ${res.body.data.accessToken as string}`;
 }
 

@@ -1,13 +1,19 @@
 import request from 'supertest';
 import { expect } from 'vitest';
 import type { Express } from 'express';
+import { createAdmin } from '../modules/auth/auth.service.js';
 
-/** Registers a company and returns a small authenticated client for tests. */
+/** Creates a company with its admin and logs in; returns the login response. */
+export async function loginAdmin(app: Express, email: string, companyName: string, name = 'Admin', language: 'en' | 'ar' = 'en') {
+  await createAdmin({ companyName, name, email, password: 'secret123', language });
+  return request(app).post('/api/v1/auth/login').send({ email, password: 'secret123' });
+}
+
+/** Creates a company with its admin and returns a small authenticated client for tests. */
 export async function registerTenant(app: Express, email = 'owner@example.com', companyName = 'Nile Trading') {
-  const res = await request(app)
-    .post('/api/v1/auth/register')
-    .send({ companyName, name: 'Owner', email, password: 'secret123', language: 'en' });
-  expect(res.status).toBe(201);
+  await createAdmin({ companyName, name: 'Admin', email, password: 'secret123', language: 'en' });
+  const res = await request(app).post('/api/v1/auth/login').send({ email, password: 'secret123' });
+  expect(res.status).toBe(200);
   const token = `Bearer ${res.body.data.accessToken as string}`;
   const tenantId = res.body.data.user.tenant.id as string;
   const url = (path: string) => `/api/v1${path}`;

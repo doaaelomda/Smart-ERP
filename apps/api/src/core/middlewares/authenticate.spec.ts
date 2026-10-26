@@ -7,6 +7,7 @@ import { useTestDatabase } from '../../test/db.js';
 import { authenticate } from './authenticate.js';
 import { errorHandler } from './error-handler.js';
 import { requirePermission } from './require-permission.js';
+import { loginAdmin } from '../../test/api-client.js';
 
 useTestDatabase();
 
@@ -21,9 +22,7 @@ probe.get('/reports', authenticate, requirePermission('reports.view'), (_req, re
 probe.use(errorHandler);
 
 async function tokenFor(email: string, company: string): Promise<string> {
-  const res = await request(createApp())
-    .post('/api/v1/auth/register')
-    .send({ companyName: company, name: 'User', email, password: 'secret123' });
+  const res = await loginAdmin(createApp(), email, company);
   return res.body.data.accessToken as string;
 }
 
@@ -34,7 +33,7 @@ describe('authenticate + tenant context', () => {
 
     const res = await request(probe).get('/roles').set('Authorization', `Bearer ${a}`);
     expect(res.status).toBe(200);
-    expect(res.body).toHaveLength(5);
+    expect(res.body).toHaveLength(2);
     expect(new Set(res.body.map((r: { tenantId: string }) => r.tenantId)).size).toBe(1);
   });
 });
@@ -45,7 +44,7 @@ describe('requirePermission', () => {
     expect((await request(probe).get('/reports').set('Authorization', `Bearer ${token}`)).status).toBe(200);
 
     // Downgrade the owner role to Sales permissions.
-    await RoleModel.updateMany({ name: 'Owner' }, { permissions: ['dashboard.view'] }).setOptions({ skipTenant: true });
+    await RoleModel.updateMany({ name: 'SuperAdmin' }, { permissions: ['dashboard.view'] }).setOptions({ skipTenant: true });
     const res = await request(probe).get('/suppliers').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(403);
     expect(res.body.error.code).toBe('FORBIDDEN');

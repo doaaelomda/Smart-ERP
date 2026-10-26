@@ -7,7 +7,7 @@ const roleSchema = new Schema(
     ...tenantIdField,
     name: { type: String, required: true, trim: true, maxlength: 50 },
     permissions: { type: [String], enum: ALL_PERMISSIONS, default: [] },
-    /** System roles (seeded on registration) cannot be deleted; Owner cannot be edited. */
+    /** System roles (seeded on registration) cannot be deleted; SuperAdmin cannot be edited. */
     isSystem: { type: Boolean, default: false },
   },
   { timestamps: true },

@@ -8,8 +8,8 @@ sales & VAT invoicing, inventory, purchasing and in-app notifications — built 
 ## Features
 
 - **Multi-tenancy** — many companies share one database; every query is scoped to the signed-in company automatically (Mongoose plugin + `AsyncLocalStorage`).
-- **Auth** — company sign-up, login, short-lived JWT access token (memory only) + rotating refresh token (httpOnly cookie) with reuse detection, rate limiting.
-- **Roles & permissions (RBAC)** — Owner, Admin, Sales, Inventory, Accountant; enforced by the API, mirrored in routes, menus and buttons.
+- **Auth** — login with a single SuperAdmin account (no public sign-up), JWT token, rate limiting.
+- **Roles & permissions (RBAC)** — SuperAdmin and Accountant; enforced by the API, mirrored in routes, menus and buttons.
 - **Sales** — customers, quotations (→ invoice), VAT invoices (draft → issued → paid / cancelled), partial payments, customer balances.
 - **Inventory** — products & services, multiple warehouses, stock ledger, adjustments, transfers, low-stock alerts.
 - **Purchasing** — suppliers, purchase orders, partial goods receipt with weighted average cost, supplier balances.
@@ -39,7 +39,6 @@ ERP-SYSTEM/
 │  │     ├─ plugins/          # tenant.plugin.ts (multi-tenancy guard)
 │  │     ├─ modules/          # auth, customers, quotations, invoices, payments, products,
 │  │     │                    # warehouses, stock, suppliers, purchase-orders, notifications
-│  │     └─ scripts/seed.ts   # demo data
 │  └─ web/                    # Angular app
 │     └─ src/app/
 │        ├─ core/             # auth, http, i18n, theme, dialog/toast services
@@ -79,10 +78,7 @@ cp apps/api/.env.example apps/api/.env      # Windows: copy apps\api\.env.exampl
 # 4. Set a JWT secret in apps/api/.env (at least 32 characters)
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
 
-# 5. Demo data (optional, recommended)
-npm run seed -w @erp/api
-
-# 6. Run shared (watch) + API + web together
+# 5. Run shared (watch) + API + web together
 npm run dev
 ```
 
@@ -97,8 +93,7 @@ npm run dev
 | `JWT_ACCESS_SECRET` | — (required) | At least 32 characters |
 | `CLIENT_URL` | `http://localhost:4200` | Allowed CORS origin |
 | `PORT` | `4000` | API port |
-| `JWT_ACCESS_TTL_SECONDS` | `900` | Access token lifetime |
-| `REFRESH_TOKEN_TTL_DAYS` | `7` | Refresh token lifetime |
+| `JWT_ACCESS_TTL_SECONDS` | `604800` | Login token lifetime (7 days) |
 | `BCRYPT_ROUNDS` | `12` | Password hashing cost |
 | `DNS_SERVERS` | — | e.g. `8.8.8.8,1.1.1.1` when `mongodb+srv` fails with `querySrv` |
 | `TRUST_PROXY` | `1` | Proxies in front of the API (Vercel → Render = `2`) |
@@ -106,26 +101,9 @@ npm run dev
 
 The server validates these on start and exits with a clear message if one is wrong.
 
-## Demo Data
+## Users
 
-```bash
-npm run seed -w @erp/api
-```
-
-Creates one demo company ("شركة النيل للأدوات المكتبية") with 12 months of activity: 3 warehouses, ~58 customers,
-25 suppliers, 53 products, ~48 purchase orders, 260 invoices with payments, 70 quotations, stock movements and notifications.
-The seed uses the real services, so stock, balances and average costs are consistent.
-Re-running replaces only the demo company. Password for every account: `Demo12345`.
-
-| Role | Email | Can do |
-|---|---|---|
-| Owner | owner@demo.smart-erp.dev | Everything |
-| Admin | admin@demo.smart-erp.dev | Everything |
-| Sales | sales@demo.smart-erp.dev | Customers, quotations, invoices, payments |
-| Inventory | inventory@demo.smart-erp.dev | Products, warehouses, stock, suppliers, purchase orders |
-| Accountant | accountant@demo.smart-erp.dev | Read invoices/customers/suppliers/POs, record payments |
-
-You can also sign up a new company from `/auth/register`; its first user becomes the Owner.
+There is no public sign-up. The first SuperAdmin account is created by the developer; the SuperAdmin then adds the other users (SuperAdmin or Accountant) from the **Users** page.
 
 ## Scripts (root)
 
@@ -144,7 +122,6 @@ Workspace commands: `npm run <script> -w @erp/api` · `-w web` · `-w @erp/share
 
 | Problem | Fix |
 |---|---|
-| `Invalid email or password` with the demo accounts | The demo users don't exist in your database yet — run `npm run seed -w @erp/api` (it uses `MONGO_URI` from `apps/api/.env`). |
 | `querySrv ECONNREFUSED` / `ENOTFOUND` with Atlas | Add `DNS_SERVERS=8.8.8.8,1.1.1.1` to `apps/api/.env`. |
 | `Server selection timed out` with Atlas | Add your IP in Atlas → Network Access. |
 | `Transaction numbers are only allowed on a replica set` | Use Atlas or the Docker replica set, not a standalone `mongod`. |
@@ -160,28 +137,25 @@ Workspace commands: `npm run <script> -w @erp/api` · `-w web` · `-w @erp/share
 | API | Render web service | `render.yaml` (Blueprint) |
 | Web | Vercel (static) | `apps/web/vercel.json` |
 
-The browser only talks to the Vercel domain: Vercel proxies `/api/*` to Render, so the refresh-token
-cookie stays first-party (`SameSite=Strict`) and no CORS is needed.
+The browser only talks to the Vercel domain: Vercel proxies `/api/*` to Render, so no CORS is needed.
 
 1. **Atlas:** create a free cluster → database user → Network Access `0.0.0.0/0` → copy the `mongodb+srv://…/smart-erp` URI.
 2. **GitHub:** push this repo.
 3. **Render:** New → Blueprint → this repo. Set `MONGO_URI` and `CLIENT_URL` (your Vercel URL). Wait for `/api/v1/health` → `ok`.
 4. **Vercel:** New Project → this repo → Root Directory `apps/web`. In `apps/web/vercel.json` replace
    `YOUR-API.onrender.com` with the Render host, commit, deploy.
-5. **Demo data (optional):** run the seed against Atlas from your machine:
-   `MONGO_URI="mongodb+srv://…" npm run seed -w @erp/api` (PowerShell: `$env:MONGO_URI="…"; npm run seed -w @erp/api`).
-6. **PrimeNG license:** set `PRIMEUI_LICENSE_KEY` in `apps/web/src/app/core/config/app.constants.ts`.
+5. **PrimeNG license:** set `PRIMEUI_LICENSE_KEY` in `apps/web/src/app/core/config/app.constants.ts`.
 
 > Render's free plan sleeps after 15 minutes without traffic; the first request after that takes ~1 minute.
 
 ## Roadmap
 
 - [x] **Phase 0 — Foundation:** monorepo, API skeleton (config, logging, errors, validation, list query), Angular shell, i18n + RTL, shared skeleton & data table
-- [x] **Phase 1a — Auth:** company registration, login, refresh-token rotation, logout, tenant isolation, RBAC, guards, dark mode
+- [x] **Phase 1a — Auth:** admin account, login, logout, tenant isolation, RBAC, guards, dark mode
 - [ ] Phase 1b — Users & roles management, company settings
 - [x] Phase 2 — Products, warehouses, stock (adjustments, transfers, low-stock alerts)
 - [x] Phase 3 — Customers, quotations, invoices, payments, notifications
 - [x] Phase 4 — Suppliers, purchase orders, goods receipt (weighted average cost)
 - [ ] Phase 5 — Smart dashboard with real data, insights
 - [ ] Phase 6 — Reports, invoice PDF + VAT QR (ZATCA), audit log, super admin
-- [x] Deployment setup — Render + Vercel + Atlas, demo seed
+- [x] Deployment setup — Render + Vercel + Atlas

@@ -48,6 +48,7 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'nav.reports',
     links: [
       { label: 'nav.reports', icon: 'bar_chart', route: '/app/reports', permission: 'reports.view' },
+      { label: 'nav.users', icon: 'manage_accounts', route: '/app/users', permission: 'users.view' },
       { label: 'nav.settings', icon: 'settings', route: '/app/settings', permission: 'settings.view' },
     ],
   },

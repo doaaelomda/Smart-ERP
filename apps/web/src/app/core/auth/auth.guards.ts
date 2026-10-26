@@ -3,7 +3,7 @@ import { Router, type CanActivateFn } from '@angular/router';
 import type { Permission } from '@erp/shared';
 import { AuthService } from './auth.service';
 
-/** Protects /app: restores the session from the refresh cookie or redirects to login. */
+/** Protects /app: restores the session from the saved token or redirects to login. */
 export const authGuard: CanActivateFn = async (_route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -11,7 +11,7 @@ export const authGuard: CanActivateFn = async (_route, state) => {
   return router.createUrlTree(['/auth/login'], { queryParams: { returnUrl: state.url } });
 };
 
-/** Keeps signed-in users away from login/register. */
+/** Keeps signed-in users away from login. */
 export const guestGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);

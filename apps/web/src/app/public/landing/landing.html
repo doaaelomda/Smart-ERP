@@ -13,7 +13,7 @@
         {{ 'common.language' | translate }}
       </button>
       <a pButton [text]="true" routerLink="/auth/login" class="!hidden sm:!inline-flex">{{ 'landing.nav.login' | translate }}</a>
-      <a pButton routerLink="/auth/register" class="!hidden sm:!inline-flex">{{ 'landing.nav.start' | translate }}</a>
+      <a pButton routerLink="/auth/login" class="!hidden sm:!inline-flex">{{ 'landing.nav.start' | translate }}</a>
     </div>
   </header>
 
@@ -42,7 +42,7 @@
           <p class="m-0 max-w-xl text-title leading-relaxed text-muted">{{ 'landing.subtitle' | translate }}</p>
 
           <div class="flex flex-wrap gap-3">
-            <a pButton routerLink="/auth/register" class="!h-12 !px-6">
+            <a pButton routerLink="/auth/login" class="!h-12 !px-6">
               {{ 'landing.cta' | translate }}
             </a>
             <a pButton [outlined]="true" routerLink="/" fragment="features" class="!h-12 !px-6">{{ 'landing.secondaryCta' | translate }}</a>
@@ -157,7 +157,7 @@
         <h2 class="m-0 text-[1.875rem] font-bold">{{ 'landing.ctaTitle' | translate }}</h2>
         <p class="m-0 max-w-xl text-title text-white/80">{{ 'landing.ctaText' | translate }}</p>
         <a
-          routerLink="/auth/register"
+          routerLink="/auth/login"
           class="inline-flex h-12 items-center rounded-full bg-white px-7 text-body font-semibold text-[#1d4ed8] no-underline shadow-card hover:bg-white/90"
         >
           {{ 'landing.cta' | translate }}

@@ -31,5 +31,5 @@ export const ALL_PERMISSIONS: Permission[] = (
   Object.entries(PERMISSIONS) as [PermissionModule, readonly string[]][]
 ).flatMap(([module, actions]) => actions.map((action) => `${module}.${action}` as Permission));
 
-export const DEFAULT_ROLES = ['Owner', 'Admin', 'Sales', 'Inventory', 'Accountant'] as const;
+export const DEFAULT_ROLES = ['SuperAdmin', 'Accountant'] as const;
 export type DefaultRole = (typeof DEFAULT_ROLES)[number];

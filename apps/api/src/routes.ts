@@ -10,6 +10,7 @@ import { purchaseOrderRouter } from './modules/purchase-orders/purchase-order.ro
 import { quotationRouter } from './modules/quotations/quotation.routes.js';
 import { stockRouter } from './modules/stock/stock.routes.js';
 import { supplierRouter } from './modules/suppliers/supplier.routes.js';
+import { userRouter } from './modules/users/user.routes.js';
 import { warehouseRouter } from './modules/warehouses/warehouse.routes.js';
 
 /** All v1 feature routers are mounted here. */
@@ -18,6 +19,7 @@ export const apiRouter = Router();
 apiRouter.use('/health', healthRouter);
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/notifications', notificationRouter);
+apiRouter.use('/users', userRouter);
 
 // Sales
 apiRouter.use('/customers', customerRouter);

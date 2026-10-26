@@ -13,7 +13,7 @@ const session = (token: string): { success: true; data: AuthSession } => ({
     expiresIn: 900,
     user: {
       id: 'u1', name: 'Doaa', email: 'd@x.com', language: 'ar',
-      role: { id: 'r1', name: 'Owner' }, permissions: ['invoices.view'],
+      role: { id: 'r1', name: 'SuperAdmin' }, permissions: ['invoices.view'],
       tenant: { id: 't1', name: 'Nile', currency: 'EGP', vatRate: 14 },
     },
   },
@@ -37,7 +37,10 @@ describe('authInterceptor', () => {
     auth = TestBed.inject(AuthService);
   });
 
-  afterEach(() => backend.verify());
+  afterEach(() => {
+    backend.verify();
+    localStorage.clear();
+  });
 
   function signIn(token = 'old-token') {
     auth.login({ email: 'd@x.com', password: 'secret123' }).subscribe();
@@ -53,34 +56,12 @@ describe('authInterceptor', () => {
     expect(backend.expectOne('https://example.com/data').request.headers.has('Authorization')).toBe(false);
   });
 
-  it('refreshes once on 401 for parallel requests and retries them with the new token', () => {
-    signIn();
-    const results: unknown[] = [];
-    http.get('/api/v1/a').subscribe((r) => results.push(r));
-    http.get('/api/v1/b').subscribe((r) => results.push(r));
-
-    backend.expectOne('/api/v1/a').flush(null, { status: 401, statusText: 'Unauthorized' });
-    backend.expectOne('/api/v1/b').flush(null, { status: 401, statusText: 'Unauthorized' });
-
-    // Only ONE refresh request for both failures.
-    backend.expectOne('/api/v1/auth/refresh').flush(session('new-token'));
-
-    const retries = backend.match((r) => r.url === '/api/v1/a' || r.url === '/api/v1/b');
-    expect(retries).toHaveLength(2);
-    retries.forEach((r) => {
-      expect(r.request.headers.get('Authorization')).toBe('Bearer new-token');
-      r.flush({ ok: true });
-    });
-    expect(results).toHaveLength(2);
-  });
-
-  it('ends the session and goes to login when refresh fails', () => {
+  it('ends the session and goes to login on 401', () => {
     signIn();
     const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     http.get('/api/v1/a').subscribe({ error: () => undefined });
 
     backend.expectOne('/api/v1/a').flush(null, { status: 401, statusText: 'Unauthorized' });
-    backend.expectOne('/api/v1/auth/refresh').flush(null, { status: 401, statusText: 'Unauthorized' });
 
     expect(auth.isAuthenticated()).toBe(false);
     expect(navigate).toHaveBeenCalledWith(['/auth/login'], expect.anything());

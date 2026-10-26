@@ -2,23 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
-import type {
-  ApiSuccess,
-  AuthSession,
-  AuthUser,
-  LoginRequest,
-  Permission,
-  RegisterRequest,
-} from '@erp/shared';
-import { catchError, finalize, map, type Observable, of, share, tap, firstValueFrom } from 'rxjs';
+import type { ApiSuccess, AuthSession, AuthUser, LoginRequest, Permission } from '@erp/shared';
+import { catchError, firstValueFrom, map, type Observable, of } from 'rxjs';
 import { API_BASE_URL } from '../config/app.constants';
 
 const AUTH_URL = `${API_BASE_URL}/auth`;
+const TOKEN_KEY = 'erp_token';
 
 /**
- * Session state. The access token lives in memory only (not localStorage, safer against XSS);
- * the refresh token is an httpOnly cookie the browser sends to /api/v1/auth/* automatically.
- * On page reload the session is restored with a silent refresh.
+ * Session state. The login token is kept in localStorage; after a page reload
+ * the user is loaded again with GET /auth/me.
  */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -27,82 +20,60 @@ export class AuthService {
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   private readonly _user = signal<AuthUser | null>(null);
-  private accessToken: string | null = null;
-  private refreshInFlight$: Observable<AuthSession> | null = null;
-  private restorePromise: Promise<boolean> | null = null;
+  private readonly permissions = computed(() => new Set(this._user()?.permissions ?? []));
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
-  private readonly permissions = computed(() => new Set(this._user()?.permissions ?? []));
 
   hasPermission(permission: Permission): boolean {
     return this.permissions().has(permission);
   }
 
   getAccessToken(): string | null {
-    return this.accessToken;
+    return this.isBrowser ? localStorage.getItem(TOKEN_KEY) : null;
   }
 
   login(body: LoginRequest): Observable<AuthUser> {
-    return this.http
-      .post<ApiSuccess<AuthSession>>(`${AUTH_URL}/login`, body, { withCredentials: true })
-      .pipe(map((res) => this.setSession(res.data)));
+    return this.http.post<ApiSuccess<AuthSession>>(`${AUTH_URL}/login`, body).pipe(
+      map((res) => {
+        localStorage.setItem(TOKEN_KEY, res.data.accessToken);
+        this._user.set(res.data.user);
+        return res.data.user;
+      }),
+    );
   }
 
-  register(body: RegisterRequest): Observable<AuthUser> {
-    return this.http
-      .post<ApiSuccess<AuthSession>>(`${AUTH_URL}/register`, body, { withCredentials: true })
-      .pipe(map((res) => this.setSession(res.data)));
-  }
+  /** Used by guards: true when already signed in, or when the saved token is still valid. */
+  async restoreSession(): Promise<boolean> {
+    if (this._user()) return true;
+    if (!this.getAccessToken()) return false;
 
-  /** Silent refresh. Concurrent callers share one request (avoids rotating the token twice). */
-  refresh(): Observable<AuthSession> {
-    this.refreshInFlight$ ??= this.http
-      .post<ApiSuccess<AuthSession>>(`${AUTH_URL}/refresh`, {}, { withCredentials: true })
-      .pipe(
-        map((res) => res.data),
-        tap((session) => this.setSession(session)),
-        finalize(() => (this.refreshInFlight$ = null)),
-        share(),
-      );
-    return this.refreshInFlight$;
-  }
-
-  /** Used by guards: resolves true when a session exists or could be restored from the cookie. */
-  restoreSession(): Promise<boolean> {
-    if (this._user()) return Promise.resolve(true);
-    if (!this.isBrowser) return Promise.resolve(false);
-
-    this.restorePromise ??= firstValueFrom(
-      this.refresh().pipe(
-        map(() => true),
-        catchError(() => of(false)),
+    return firstValueFrom(
+      this.http.get<ApiSuccess<AuthUser>>(`${AUTH_URL}/me`).pipe(
+        map((res) => {
+          this._user.set(res.data);
+          return true;
+        }),
+        catchError(() => {
+          this.clearSession();
+          return of(false);
+        }),
       ),
-    ).finally(() => (this.restorePromise = null));
-    return this.restorePromise;
+    );
   }
 
   logout(): void {
-    this.http
-      .post(`${AUTH_URL}/logout`, {}, { withCredentials: true })
-      .pipe(catchError(() => of(null)))
-      .subscribe(() => this.endSession());
+    this.endSession();
   }
 
-  /** Called when a refresh fails mid-session (expired or revoked). */
+  /** Clears the session and goes to the login page (also used when the API answers 401). */
   endSession(returnUrl?: string): void {
     this.clearSession();
     void this.router.navigate(['/auth/login'], returnUrl ? { queryParams: { returnUrl } } : {});
   }
 
-  private setSession(session: AuthSession): AuthUser {
-    this.accessToken = session.accessToken;
-    this._user.set(session.user);
-    return session.user;
-  }
-
   private clearSession(): void {
-    this.accessToken = null;
+    if (this.isBrowser) localStorage.removeItem(TOKEN_KEY);
     this._user.set(null);
   }
 }

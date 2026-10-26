@@ -17,10 +17,8 @@ const envSchema = z.object({
     .optional()
     .transform((v) => (v ? v.split(',').map((s) => s.trim()).filter(Boolean) : [])),
   JWT_ACCESS_SECRET: z.string().min(32, 'JWT_ACCESS_SECRET must be at least 32 characters'),
-  /** Access token lifetime in seconds (default 15 minutes). */
-  JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(900),
-  /** Refresh token lifetime in days. */
-  REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(7),
+  /** Login token lifetime in seconds (default 7 days). */
+  JWT_ACCESS_TTL_SECONDS: z.coerce.number().int().positive().default(604800),
   BCRYPT_ROUNDS: z.coerce.number().int().min(4).max(15).default(12),
   /** Number of proxies in front of the API (Render = 1; Vercel → Render = 2). Used for req.ip / rate limiting. */
   TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),

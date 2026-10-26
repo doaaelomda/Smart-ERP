@@ -32,6 +32,7 @@
     "typeToSearch": "Type to search…"
   },
   "nav": {
+    "users": "Users",
     "main": "Main",
     "dashboard": "Dashboard",
     "sales": "Sales",
@@ -226,10 +227,7 @@
     "INVALID_STATUS_TRANSITION": "This action is not allowed in the current status"
   },
   "roles": {
-    "Owner": "Owner",
-    "Admin": "Admin",
-    "Sales": "Sales",
-    "Inventory": "Inventory",
+    "SuperAdmin": "Super Admin",
     "Accountant": "Accountant"
   },
   "notifications": {
@@ -417,6 +415,21 @@
       "goodsReceipt": "Goods receipt",
       "adjustment": "Adjustment",
       "transfer": "Transfer"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Create accounts for your team and choose what each person can do.",
+    "add": "Add user",
+    "edit": "Edit user",
+    "deleteTitle": "Delete user?",
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "role": "Role",
+      "password": "Password",
+      "newPassword": "New password (leave empty to keep)",
+      "isActive": "Active account"
     }
   },
   "suppliers": {
